@@ -1,0 +1,162 @@
+<div class="tool">
+  <div class="dropzone" id="zone">
+    <strong>Choisir une ou plusieurs images</strong>
+    <span>ou glissez-les ici — JPG, PNG, WebP, GIF, BMP, SVG</span>
+  </div>
+
+  <div class="controls">
+    <div class="field">
+      <label for="format">Convertir en</label>
+      <select id="format">
+        <option value="image/jpeg" selected>JPG</option>
+        <option value="image/png">PNG (transparence conservée)</option>
+        <option value="image/webp">WebP</option>
+      </select>
+    </div>
+    <div class="field">
+      <label for="qualite">Qualité <span id="qval">92 %</span></label>
+      <input type="range" id="qualite" min="40" max="100" value="92">
+      <span class="hint">Sans effet sur le PNG, qui est sans perte.</span>
+    </div>
+    <div class="field">
+      <label for="fond">Fond des zones transparentes</label>
+      <select id="fond">
+        <option value="#ffffff" selected>Blanc</option>
+        <option value="#000000">Noir</option>
+      </select>
+      <span class="hint">Utilisé quand la sortie est un JPG.</span>
+    </div>
+  </div>
+
+  <div class="actions">
+    <button id="lancer" disabled>Convertir</button>
+    <span class="status" id="etat">Aucune image sélectionnée.</span>
+  </div>
+
+  <div class="result" id="resultat" hidden>
+    <dl class="stats">
+      <div><dt>Images converties</dt><dd id="nb">—</dd></div>
+      <div><dt>Poids total avant</dt><dd id="avant">—</dd></div>
+      <div><dt>Poids total après</dt><dd id="apres">—</dd></div>
+    </dl>
+    <div id="liste"></div>
+  </div>
+
+  <p class="privacy-note">
+    <span aria-hidden="true">🔒</span>
+    <span>La conversion utilise le moteur graphique de votre navigateur. Vos images ne sont jamais téléversées, et il n'y a aucune limite de nombre ni de taille.</span>
+  </p>
+</div>
+
+<div class="prose">
+  <h2>Quel format choisir</h2>
+  <div class="scroll-x">
+    <table>
+      <thead>
+        <tr><th>Format</th><th>Transparence</th><th>Poids</th><th>Bon pour</th></tr>
+      </thead>
+      <tbody>
+        <tr><td><strong>JPG</strong></td><td>Non</td><td>Léger</td><td>Photos, envois par e-mail, formulaires administratifs</td></tr>
+        <tr><td><strong>PNG</strong></td><td>Oui</td><td>Lourd</td><td>Logos, captures d'écran, images à fond transparent</td></tr>
+        <tr><td><strong>WebP</strong></td><td>Oui</td><td>Très léger</td><td>Sites web modernes</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p>En pratique : <strong>le JPG reste le format universel</strong>. Si un site ou un logiciel refuse votre fichier sans expliquer pourquoi, convertissez-le en JPG, cela résout la grande majorité des cas.</p>
+
+  <h2>Le cas du WebP</h2>
+  <p>Depuis que les navigateurs l'ont adopté, enregistrer une image trouvée sur le web donne souvent un fichier <code>.webp</code>. Beaucoup de logiciels de bureau, de téléservices et d'imprimeurs ne le reconnaissent toujours pas. La conversion vers JPG ou PNG règle le problème en une étape, sans perte visible si vous laissez la qualité au-dessus de 90 %.</p>
+
+  <h2>Questions fréquentes</h2>
+
+  <details>
+    <summary>Pourquoi mon PNG transparent devient-il blanc en JPG&nbsp;?</summary>
+    <p>Le format JPG ne sait tout simplement pas représenter la transparence. Les zones transparentes doivent donc recevoir une couleur : l'outil applique du blanc par défaut, modifiable en noir. Si la transparence doit être conservée, choisissez PNG ou WebP comme format de sortie.</p>
+  </details>
+
+  <details>
+    <summary>Puis-je convertir des photos HEIC d'iPhone&nbsp;?</summary>
+    <p>Sur un Mac, un iPhone ou un iPad, oui : Safari décode le HEIC nativement. Sur Chrome ou Firefox sous Windows et Android, non — ces navigateurs ne savent pas lire ce format. La solution la plus simple est de régler votre iPhone sur « Le plus compatible » dans Réglages › Appareil photo › Formats, pour qu'il produise directement des JPG.</p>
+  </details>
+
+  <details>
+    <summary>La conversion dégrade-t-elle mon image&nbsp;?</summary>
+    <p>Vers PNG, jamais : c'est un format sans perte. Vers JPG ou WebP, une compression est appliquée, mais au-dessus de 90 % de qualité la différence est invisible à l'œil nu. Évitez en revanche de convertir plusieurs fois de suite en JPG : les pertes s'accumulent.</p>
+  </details>
+
+  <details>
+    <summary>Combien d'images puis-je traiter d'un coup&nbsp;?</summary>
+    <p>Autant que vous voulez, la seule limite étant la mémoire de votre appareil. Sélectionnez-les toutes en une fois : chaque fichier converti apparaît avec son propre lien de téléchargement.</p>
+  </details>
+
+  <details>
+    <summary>Les données EXIF sont-elles conservées&nbsp;?</summary>
+    <p>Non, et c'est souvent souhaitable : la position GPS, le modèle d'appareil et la date de prise de vue sont supprimés à la conversion. L'orientation, elle, est correctement appliquée à l'image.</p>
+  </details>
+</div>
+
+<script type="module">
+  import { $, poids, zoneDepot, chargerImage, versCanvas, versBlob, telecharger, renommer, etat }
+    from '/assets/outil.js';
+
+  let fichiers = [];
+  const zone = $('#zone'), bouton = $('#lancer'), msg = $('#etat'), resultat = $('#resultat');
+
+  $('#qualite').addEventListener('input', (e) => { $('#qval').textContent = `${e.target.value} %`; });
+
+  zoneDepot(zone, (fs) => {
+    fichiers = fs;
+    resultat.hidden = true;
+    bouton.disabled = false;
+    zone.querySelector('strong').textContent =
+      fs.length === 1 ? fs[0].name : `${fs.length} images sélectionnées`;
+    etat(msg, `${fs.length} fichier(s) — ${poids(fs.reduce((s, f) => s + f.size, 0))}`);
+  }, { accept: 'image/*', multiple: true });
+
+  bouton.addEventListener('click', async () => {
+    if (!fichiers.length) return;
+    bouton.disabled = true;
+
+    const type = $('#format').value;
+    const q = parseInt($('#qualite').value, 10) / 100;
+    const ext = { 'image/jpeg': 'jpg', 'image/png': 'png', 'image/webp': 'webp' }[type];
+    const fond = type === 'image/jpeg' ? $('#fond').value : null;
+
+    const liste = $('#liste');
+    liste.innerHTML = '';
+    let avant = 0, apres = 0, ok = 0;
+
+    for (const [i, f] of fichiers.entries()) {
+      etat(msg, `Conversion ${i + 1} / ${fichiers.length}…`);
+      try {
+        const img = await chargerImage(f);
+        const canvas = versCanvas(img, img.width, img.height, fond);
+        const blob = await versBlob(canvas, type, q);
+        avant += f.size; apres += blob.size; ok++;
+
+        const nom = renommer(f.name, ext);
+        const ligne = document.createElement('div');
+        ligne.className = 'actions';
+        ligne.innerHTML = `<span class="status">${nom} — ${poids(blob.size)}</span>`;
+        const btn = document.createElement('button');
+        btn.className = 'secondary';
+        btn.textContent = 'Télécharger';
+        btn.onclick = () => telecharger(blob, nom);
+        ligne.prepend(btn);
+        liste.appendChild(ligne);
+      } catch (e) {
+        const ligne = document.createElement('p');
+        ligne.className = 'status error';
+        ligne.textContent = `${f.name} : ${e.message}`;
+        liste.appendChild(ligne);
+      }
+    }
+
+    $('#nb').textContent = `${ok} / ${fichiers.length}`;
+    $('#avant').textContent = poids(avant);
+    $('#apres').textContent = poids(apres);
+    resultat.hidden = false;
+    etat(msg, ok === fichiers.length ? 'Terminé.' : `${fichiers.length - ok} fichier(s) non pris en charge par ce navigateur.`);
+    bouton.disabled = false;
+  });
+</script>

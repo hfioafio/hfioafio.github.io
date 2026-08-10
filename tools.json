@@ -1,0 +1,66 @@
+[
+  {
+    "slug": "compresser-image-taille-precise",
+    "category": "image",
+    "title": "Compresser une image à un poids précis (Mo ou Ko)",
+    "h1": "Compresser une image à un poids précis",
+    "description": "Réduisez une photo JPG ou PNG sous un poids exact — 1 Mo, 500 Ko, 2 Mo — directement dans votre navigateur. Aucun envoi de fichier, aucune inscription.",
+    "intent": "Formulaires administratifs qui refusent les fichiers trop lourds (ANTS, impots.gouv, CAF, dossiers de candidature).",
+    "keywords": [
+      "compresser image moins de 1 mo",
+      "réduire taille photo 500 ko",
+      "compresser jpeg poids exact",
+      "réduire photo pour formulaire en ligne"
+    ],
+    "status": "live",
+    "createdAt": "2026-08-10"
+  },
+  {
+    "slug": "redimensionner-image-dimensions-exactes",
+    "category": "image",
+    "title": "Redimensionner une image aux dimensions exactes (px ou mm)",
+    "h1": "Redimensionner une image aux dimensions exactes",
+    "description": "Donnez à votre image une largeur et une hauteur précises, en pixels ou en millimètres, avec ou sans conservation des proportions. Traitement local, sans téléversement.",
+    "intent": "Photo d'identité, avatar, image à un format imposé par un site ou une administration.",
+    "keywords": [
+      "redimensionner image dimensions exactes",
+      "photo identité 35x45 mm en ligne",
+      "changer taille image en pixels",
+      "recadrer photo format imposé"
+    ],
+    "status": "live",
+    "createdAt": "2026-08-10"
+  },
+  {
+    "slug": "convertir-image-jpg-png-webp",
+    "category": "image",
+    "title": "Convertir une image en JPG, PNG ou WebP",
+    "h1": "Convertir une image en JPG, PNG ou WebP",
+    "description": "Convertissez vos images entre JPG, PNG et WebP sans logiciel et sans inscription. La conversion se fait dans votre navigateur, vos fichiers ne quittent pas votre ordinateur.",
+    "intent": "Site qui refuse le WebP, besoin d'un PNG transparent, allègement d'un JPG.",
+    "keywords": [
+      "convertir webp en jpg",
+      "convertir png en jpg gratuit",
+      "convertir image en webp",
+      "changer format image en ligne"
+    ],
+    "status": "live",
+    "createdAt": "2026-08-10"
+  },
+  {
+    "slug": "signature-png-fond-transparent",
+    "category": "image",
+    "title": "Créer une signature PNG à fond transparent",
+    "h1": "Créer une signature PNG à fond transparent",
+    "description": "Dessinez votre signature ou importez sa photo, et récupérez un PNG à fond transparent, prêt à coller dans un contrat, un PDF ou un e-mail. Tout se passe dans votre navigateur.",
+    "intent": "Signer un document numérique sans imprimer ni scanner.",
+    "keywords": [
+      "signature png fond transparent",
+      "détourer une signature scannée",
+      "signature manuscrite numérique gratuite",
+      "faire sa signature en ligne png"
+    ],
+    "status": "live",
+    "createdAt": "2026-08-10"
+  }
+]

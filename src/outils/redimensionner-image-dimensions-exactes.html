@@ -1,0 +1,209 @@
+<div class="tool">
+  <div class="dropzone" id="zone">
+    <strong>Choisir une image</strong>
+    <span>ou glissez-la ici — JPG, PNG, WebP, GIF</span>
+  </div>
+
+  <div class="controls">
+    <div class="field">
+      <label for="largeur">Largeur</label>
+      <input type="number" id="largeur" min="1" step="1">
+    </div>
+    <div class="field">
+      <label for="hauteur">Hauteur</label>
+      <input type="number" id="hauteur" min="1" step="1">
+    </div>
+    <div class="field">
+      <label for="unite">Unité</label>
+      <select id="unite">
+        <option value="px" selected>Pixels</option>
+        <option value="mm">Millimètres (impression)</option>
+      </select>
+    </div>
+    <div class="field">
+      <label for="dpi">Résolution d'impression</label>
+      <select id="dpi">
+        <option value="300" selected>300 ppp (photo)</option>
+        <option value="600">600 ppp (haute qualité)</option>
+        <option value="150">150 ppp (brouillon)</option>
+      </select>
+      <span class="hint">Utilisée uniquement en millimètres.</span>
+    </div>
+  </div>
+
+  <div class="controls">
+    <div class="field">
+      <label for="preset">Format prédéfini</label>
+      <select id="preset">
+        <option value="">— Dimensions personnalisées —</option>
+        <option value="35x45mm">Photo d'identité française — 35 × 45 mm</option>
+        <option value="51x51mm">Photo visa américain — 51 × 51 mm</option>
+        <option value="1024x1024px">Avatar carré — 1024 × 1024 px</option>
+        <option value="1920x1080px">Fond d'écran — 1920 × 1080 px</option>
+        <option value="1200x630px">Aperçu réseaux sociaux — 1200 × 630 px</option>
+      </select>
+    </div>
+    <div class="field">
+      <label for="mode">Ajustement</label>
+      <select id="mode">
+        <option value="cover" selected>Remplir et rogner</option>
+        <option value="contain">Tout garder (bandes)</option>
+        <option value="stretch">Étirer (déforme)</option>
+      </select>
+    </div>
+    <div class="field">
+      <label for="format">Format de sortie</label>
+      <select id="format">
+        <option value="image/jpeg" selected>JPG</option>
+        <option value="image/png">PNG</option>
+        <option value="image/webp">WebP</option>
+      </select>
+    </div>
+  </div>
+
+  <div class="actions">
+    <button id="lancer" disabled>Redimensionner</button>
+    <span class="status" id="etat">Aucune image sélectionnée.</span>
+  </div>
+
+  <div class="result" id="resultat" hidden>
+    <img class="preview" id="apercu" alt="Aperçu de l'image redimensionnée">
+    <dl class="stats">
+      <div><dt>Dimensions</dt><dd id="dims">—</dd></div>
+      <div><dt>Poids</dt><dd id="taille">—</dd></div>
+      <div><dt>Impression</dt><dd id="impression">—</dd></div>
+    </dl>
+    <button id="telecharger">Télécharger l'image</button>
+  </div>
+
+  <p class="privacy-note">
+    <span aria-hidden="true">🔒</span>
+    <span>Votre image ne quitte pas votre appareil. Le redimensionnement est effectué localement par votre navigateur.</span>
+  </p>
+</div>
+
+<div class="prose">
+  <h2>Choisir le bon mode d'ajustement</h2>
+  <p>Quand les proportions demandées ne correspondent pas à celles de votre image, il faut trancher. Les trois modes couvrent les trois arbitrages possibles :</p>
+  <ul>
+    <li><strong>Remplir et rogner</strong> — l'image occupe tout le cadre, les bords qui dépassent sont coupés. C'est le bon choix pour une photo d'identité ou un avatar : aucune déformation, aucune bande.</li>
+    <li><strong>Tout garder</strong> — l'image entière est visible, complétée par des bandes blanches. Utile quand rien ne doit être coupé, par exemple un document ou un schéma.</li>
+    <li><strong>Étirer</strong> — les dimensions sont respectées à la lettre, quitte à déformer. À éviter sauf contrainte technique explicite.</li>
+  </ul>
+
+  <h2>Pixels ou millimètres&nbsp;?</h2>
+  <p>Un écran raisonne en pixels, une imprimante en millimètres. Le passage de l'un à l'autre dépend de la résolution : à 300 ppp, un millimètre vaut environ 11,8 pixels. Une photo d'identité de 35 × 45 mm demande donc <strong>413 × 531 pixels</strong> pour être imprimée correctement.</p>
+  <p>Si vous déposez la photo sur un téléservice qui l'imprimera lui-même, choisissez les millimètres à 300 ppp. Si c'est pour un usage à l'écran, restez en pixels.</p>
+
+  <h2>Questions fréquentes</h2>
+
+  <details>
+    <summary>Quelle taille pour une photo d'identité française&nbsp;?</summary>
+    <p>La norme officielle est de 35 mm de large sur 45 mm de haut, le visage occupant entre 32 et 36 mm du menton au sommet du crâne. Le format prédéfini de l'outil applique ces dimensions, mais attention : le cadrage du visage, l'expression neutre et le fond clair uni restent sous votre responsabilité, et une photo non conforme sera refusée.</p>
+  </details>
+
+  <details>
+    <summary>Puis-je agrandir une petite image&nbsp;?</summary>
+    <p>Oui, techniquement, mais le résultat sera flou. Agrandir n'invente pas de détails : les pixels sont simplement interpolés. Partez toujours du fichier d'origine le plus grand dont vous disposez.</p>
+  </details>
+
+  <details>
+    <summary>Comment garder les proportions d'origine&nbsp;?</summary>
+    <p>Modifiez uniquement la largeur : la hauteur se recalcule automatiquement pour conserver le rapport de l'image. Dès que vous saisissez les deux valeurs vous-même, c'est le mode d'ajustement choisi qui décide du rendu.</p>
+  </details>
+
+  <details>
+    <summary>Que signifie « ppp »&nbsp;?</summary>
+    <p>Points par pouce, la densité d'impression. 300 ppp est le standard pour une photo de qualité, 150 ppp suffit pour un brouillon, et 600 ppp ne se justifie que pour des impressions professionnelles.</p>
+  </details>
+</div>
+
+<script type="module">
+  import { $, poids, zoneDepot, chargerImage, versBlob, telecharger, renommer, etat }
+    from '/assets/outil.js';
+
+  let fichier = null, source = null, sortie = null, ratio = 1;
+  const zone = $('#zone'), bouton = $('#lancer'), msg = $('#etat'), resultat = $('#resultat');
+  const lEl = $('#largeur'), hEl = $('#hauteur'), uniteEl = $('#unite'), dpiEl = $('#dpi');
+
+  const mmVersPx = (mm, dpi) => Math.round((mm / 25.4) * dpi);
+
+  zoneDepot(zone, async ([f]) => {
+    fichier = f;
+    resultat.hidden = true;
+    etat(msg, `Chargement de « ${f.name} »…`);
+    try {
+      source = await chargerImage(f);
+      ratio = source.width / source.height;
+      if (uniteEl.value === 'px') { lEl.value = source.width; hEl.value = source.height; }
+      bouton.disabled = false;
+      etat(msg, `${f.name} — ${source.width}×${source.height} px, ${poids(f.size)}`);
+      zone.querySelector('strong').textContent = f.name;
+    } catch (e) {
+      bouton.disabled = true;
+      etat(msg, e.message, true);
+    }
+  });
+
+  // Saisir la largeur seule conserve les proportions.
+  lEl.addEventListener('input', () => {
+    if (document.activeElement === lEl && source && lEl.value) {
+      hEl.value = Math.max(1, Math.round(parseFloat(lEl.value) / ratio));
+    }
+  });
+
+  $('#preset').addEventListener('change', (e) => {
+    const v = e.target.value;
+    if (!v) return;
+    const m = /^(\d+)x(\d+)(px|mm)$/.exec(v);
+    lEl.value = m[1]; hEl.value = m[2]; uniteEl.value = m[3];
+  });
+
+  bouton.addEventListener('click', async () => {
+    if (!source) return;
+    bouton.disabled = true;
+    etat(msg, 'Redimensionnement…');
+
+    try {
+      const dpi = parseInt(dpiEl.value, 10);
+      const enMm = uniteEl.value === 'mm';
+      const L = enMm ? mmVersPx(parseFloat(lEl.value), dpi) : Math.round(parseFloat(lEl.value));
+      const H = enMm ? mmVersPx(parseFloat(hEl.value), dpi) : Math.round(parseFloat(hEl.value));
+      if (!(L > 0 && H > 0)) throw new Error('Dimensions invalides.');
+
+      const type = $('#format').value;
+      const canvas = document.createElement('canvas');
+      canvas.width = L; canvas.height = H;
+      const ctx = canvas.getContext('2d');
+      ctx.imageSmoothingQuality = 'high';
+      if (type !== 'image/png') { ctx.fillStyle = '#ffffff'; ctx.fillRect(0, 0, L, H); }
+
+      const mode = $('#mode').value;
+      if (mode === 'stretch') {
+        ctx.drawImage(source, 0, 0, L, H);
+      } else {
+        const k = mode === 'cover'
+          ? Math.max(L / source.width, H / source.height)
+          : Math.min(L / source.width, H / source.height);
+        const l = source.width * k, h = source.height * k;
+        ctx.drawImage(source, (L - l) / 2, (H - h) / 2, l, h);
+      }
+
+      sortie = await versBlob(canvas, type, 0.92);
+      const ext = { 'image/jpeg': 'jpg', 'image/png': 'png', 'image/webp': 'webp' }[type];
+
+      $('#apercu').src = URL.createObjectURL(sortie);
+      $('#dims').textContent = `${L}×${H} px`;
+      $('#taille').textContent = poids(sortie.size);
+      $('#impression').textContent =
+        `${(L / dpi * 25.4).toFixed(1)} × ${(H / dpi * 25.4).toFixed(1)} mm à ${dpi} ppp`;
+      resultat.hidden = false;
+      etat(msg, 'Terminé.');
+      $('#telecharger').onclick = () => telecharger(sortie, renommer(fichier.name, ext));
+    } catch (e) {
+      etat(msg, e.message, true);
+    } finally {
+      bouton.disabled = false;
+    }
+  });
+</script>

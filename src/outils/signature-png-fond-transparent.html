@@ -1,0 +1,279 @@
+<div class="tool">
+  <div class="controls" style="margin-top:0">
+    <div class="field">
+      <label for="methode">Méthode</label>
+      <select id="methode">
+        <option value="dessin" selected>Dessiner ma signature</option>
+        <option value="photo">Importer une photo / un scan</option>
+      </select>
+    </div>
+    <div class="field" id="champ-couleur">
+      <label for="encre">Couleur de l'encre</label>
+      <select id="encre">
+        <option value="#0b1e3f" selected>Bleu foncé (stylo)</option>
+        <option value="#000000">Noir</option>
+        <option value="#1c3f8f">Bleu vif</option>
+      </select>
+    </div>
+    <div class="field" id="champ-epaisseur">
+      <label for="epaisseur">Épaisseur du trait <span id="eval">3</span></label>
+      <input type="range" id="epaisseur" min="1" max="10" value="3">
+    </div>
+    <div class="field" id="champ-seuil" hidden>
+      <label for="seuil">Sensibilité du détourage <span id="sval">60 %</span></label>
+      <input type="range" id="seuil" min="20" max="90" value="60">
+      <span class="hint">Augmentez si des taches de fond subsistent.</span>
+    </div>
+  </div>
+
+  <div id="bloc-dessin" style="margin-top:1.5rem">
+    <canvas id="planche" width="900" height="300"
+      style="width:100%;height:auto;touch-action:none;cursor:crosshair;border:1px solid var(--border);border-radius:7px;background:#fff"
+      aria-label="Zone de dessin de la signature"></canvas>
+    <p class="status" style="margin-top:.5rem">Signez avec la souris, le doigt ou un stylet.</p>
+  </div>
+
+  <div id="bloc-photo" hidden style="margin-top:1.5rem">
+    <div class="dropzone" id="zone">
+      <strong>Choisir la photo de votre signature</strong>
+      <span>Signez sur une feuille blanche, photographiez-la, déposez-la ici</span>
+    </div>
+  </div>
+
+  <div class="actions">
+    <button id="lancer">Générer le PNG transparent</button>
+    <button id="effacer" class="secondary">Effacer</button>
+    <span class="status" id="etat"></span>
+  </div>
+
+  <div class="result" id="resultat" hidden>
+    <img class="preview" id="apercu" alt="Signature détourée sur fond transparent">
+    <dl class="stats">
+      <div><dt>Dimensions</dt><dd id="dims">—</dd></div>
+      <div><dt>Poids</dt><dd id="taille">—</dd></div>
+      <div><dt>Fond</dt><dd>Transparent</dd></div>
+    </dl>
+    <button id="telecharger">Télécharger la signature</button>
+  </div>
+
+  <p class="privacy-note">
+    <span aria-hidden="true">🔒</span>
+    <span>Votre signature est un élément sensible. Elle reste sur votre appareil : rien n'est envoyé, rien n'est enregistré, et fermer cet onglet efface tout définitivement.</span>
+  </p>
+</div>
+
+<div class="prose">
+  <h2>Obtenir un détourage propre à partir d'une photo</h2>
+  <p>Le détourage automatique distingue l'encre du papier par contraste. Trois précautions suffisent à obtenir un résultat net :</p>
+  <ul>
+    <li><strong>Une feuille blanche et unie</strong>, sans lignes ni carreaux — le quadrillage serait interprété comme de l'encre.</li>
+    <li><strong>Un éclairage régulier</strong>, sans ombre portée de votre main ni reflet du flash. La lumière du jour près d'une fenêtre est idéale.</li>
+    <li><strong>Un stylo bien noir ou bleu foncé</strong>. Un crayon à papier ou un stylo pâle donne un contraste trop faible.</li>
+  </ul>
+  <p>Si des taches grises persistent autour du trait, augmentez la sensibilité du détourage. Si au contraire la signature devient trouée, diminuez-la.</p>
+
+  <h2>Insérer la signature dans un document</h2>
+  <ul>
+    <li><strong>Word</strong> — Insertion › Images, puis Format de l'image › Habillage › Devant le texte.</li>
+    <li><strong>Aperçu (macOS)</strong> — glissez le PNG sur le PDF, puis redimensionnez-le.</li>
+    <li><strong>Google Docs</strong> — Insertion › Image › Importer depuis l'ordinateur.</li>
+    <li><strong>E-mail</strong> — ajoutez le PNG dans votre bloc de signature automatique.</li>
+  </ul>
+
+  <h2>Ce que vaut juridiquement une image de signature</h2>
+  <p>Une signature collée dans un document est une <em>signature manuscrite numérisée</em>. En droit français elle ne bénéficie pas de la présomption de fiabilité attachée à la signature électronique qualifiée au sens du règlement eIDAS : en cas de contestation, c'est à celui qui s'en prévaut de prouver l'accord des parties. Elle convient parfaitement aux courriers, devis, attestations et documents internes. Pour un acte à fort enjeu — vente immobilière, contrat de travail, engagement bancaire — passez par un prestataire de signature électronique qualifié.</p>
+  <p style="font-size:.85rem;color:var(--muted)">Cette page fournit une information générale et ne constitue pas un conseil juridique.</p>
+
+  <h2>Questions fréquentes</h2>
+
+  <details>
+    <summary>Ma signature est-elle envoyée quelque part&nbsp;?</summary>
+    <p>Non. Le dessin comme le détourage sont réalisés par votre navigateur, et aucune donnée ne transite par un serveur. Rien n'est stocké non plus : fermer l'onglet suffit à tout effacer.</p>
+  </details>
+
+  <details>
+    <summary>Pourquoi un PNG plutôt qu'un JPG&nbsp;?</summary>
+    <p>Parce que le JPG ne gère pas la transparence : votre signature arriverait avec un rectangle blanc qui masquerait le texte du document. Seul le PNG permet de la poser directement sur une ligne de contrat.</p>
+  </details>
+
+  <details>
+    <summary>Une signature dessinée à la souris est-elle valable&nbsp;?</summary>
+    <p>Juridiquement, elle a la même valeur qu'une signature scannée : celle d'un commencement de preuve, pas d'une signature électronique qualifiée. Le rendu est simplement moins fidèle qu'au stylet ou au doigt sur écran tactile.</p>
+  </details>
+
+  <details>
+    <summary>Le fond de ma photo reste gris, que faire&nbsp;?</summary>
+    <p>Augmentez la sensibilité du détourage. Si cela ne suffit pas, la photo est probablement sous-exposée ou ombrée : refaites-la près d'une fenêtre, à plat, sans que votre main projette d'ombre sur la feuille.</p>
+  </details>
+
+  <details>
+    <summary>Puis-je changer la couleur de l'encre après coup&nbsp;?</summary>
+    <p>En mode dessin, oui : choisissez la couleur avant de signer. En mode photo, la couleur d'origine du stylo est conservée telle quelle.</p>
+  </details>
+</div>
+
+<script type="module">
+  import { $, poids, zoneDepot, chargerImage, versBlob, telecharger, etat } from '/assets/outil.js';
+
+  const planche = $('#planche');
+  const ctx = planche.getContext('2d');
+  const msg = $('#etat'), resultat = $('#resultat');
+  let sortie = null, photo = null, aDessine = false;
+
+  /* ---- Mode dessin ---- */
+
+  ctx.lineCap = ctx.lineJoin = 'round';
+
+  const position = (e) => {
+    const r = planche.getBoundingClientRect();
+    return {
+      x: (e.clientX - r.left) * (planche.width / r.width),
+      y: (e.clientY - r.top) * (planche.height / r.height),
+    };
+  };
+
+  let trace = false;
+  planche.addEventListener('pointerdown', (e) => {
+    trace = true;
+    aDessine = true;
+    planche.setPointerCapture(e.pointerId);
+    const { x, y } = position(e);
+    ctx.strokeStyle = $('#encre').value;
+    ctx.lineWidth = parseInt($('#epaisseur').value, 10) * 1.6;
+    ctx.beginPath();
+    ctx.moveTo(x, y);
+  });
+  planche.addEventListener('pointermove', (e) => {
+    if (!trace) return;
+    e.preventDefault();
+    const { x, y } = position(e);
+    ctx.lineTo(x, y);
+    ctx.stroke();
+  });
+  ['pointerup', 'pointercancel', 'pointerleave'].forEach((ev) =>
+    planche.addEventListener(ev, () => { trace = false; })
+  );
+
+  $('#epaisseur').addEventListener('input', (e) => { $('#eval').textContent = e.target.value; });
+  $('#seuil').addEventListener('input', (e) => { $('#sval').textContent = `${e.target.value} %`; });
+
+  /* ---- Bascule de mode ---- */
+
+  $('#methode').addEventListener('change', (e) => {
+    const dessin = e.target.value === 'dessin';
+    $('#bloc-dessin').hidden = !dessin;
+    $('#bloc-photo').hidden = dessin;
+    $('#champ-couleur').hidden = !dessin;
+    $('#champ-epaisseur').hidden = !dessin;
+    $('#champ-seuil').hidden = dessin;
+    resultat.hidden = true;
+    etat(msg, '');
+  });
+
+  zoneDepot($('#zone'), async ([f]) => {
+    try {
+      photo = await chargerImage(f);
+      etat(msg, `${f.name} chargée — ${photo.width}×${photo.height} px`);
+      $('#zone').querySelector('strong').textContent = f.name;
+    } catch (e) {
+      etat(msg, e.message, true);
+    }
+  });
+
+  $('#effacer').addEventListener('click', () => {
+    ctx.clearRect(0, 0, planche.width, planche.height);
+    aDessine = false;
+    photo = null;
+    resultat.hidden = true;
+    $('#zone').querySelector('strong').textContent = 'Choisir la photo de votre signature';
+    etat(msg, '');
+  });
+
+  /* ---- Détourage : le fond clair devient transparent ---- */
+
+  function detourer(image, seuil) {
+    const c = document.createElement('canvas');
+    const maxL = 1600;
+    const k = Math.min(1, maxL / image.width);
+    c.width = Math.round(image.width * k);
+    c.height = Math.round(image.height * k);
+    const cx = c.getContext('2d', { willReadFrequently: true });
+    cx.drawImage(image, 0, 0, c.width, c.height);
+
+    const data = cx.getImageData(0, 0, c.width, c.height);
+    const px = data.data;
+    const limite = seuil * 255;
+
+    for (let i = 0; i < px.length; i += 4) {
+      // Luminance perçue : plus c'est clair, plus c'est du papier.
+      const lum = 0.2126 * px[i] + 0.7152 * px[i + 1] + 0.0722 * px[i + 2];
+      if (lum >= limite) {
+        px[i + 3] = 0;
+      } else {
+        // Transition douce sur les bords du trait, pour éviter l'effet crénelé.
+        const a = Math.min(1, (limite - lum) / (limite * 0.35));
+        px[i + 3] = Math.round(255 * a);
+        const f = 0.75;
+        px[i] *= f; px[i + 1] *= f; px[i + 2] *= f;
+      }
+    }
+    cx.putImageData(data, 0, 0);
+    return c;
+  }
+
+  /** Rogne les marges entièrement transparentes. */
+  function rogner(canvas) {
+    const cx = canvas.getContext('2d', { willReadFrequently: true });
+    const { data, width: W, height: H } = cx.getImageData(0, 0, canvas.width, canvas.height);
+    let xMin = W, yMin = H, xMax = -1, yMax = -1;
+
+    for (let y = 0; y < H; y++) {
+      for (let x = 0; x < W; x++) {
+        if (data[(y * W + x) * 4 + 3] > 12) {
+          if (x < xMin) xMin = x;
+          if (x > xMax) xMax = x;
+          if (y < yMin) yMin = y;
+          if (y > yMax) yMax = y;
+        }
+      }
+    }
+    if (xMax < 0) return null;
+
+    const marge = 8;
+    xMin = Math.max(0, xMin - marge); yMin = Math.max(0, yMin - marge);
+    xMax = Math.min(W - 1, xMax + marge); yMax = Math.min(H - 1, yMax + marge);
+
+    const out = document.createElement('canvas');
+    out.width = xMax - xMin + 1;
+    out.height = yMax - yMin + 1;
+    out.getContext('2d').drawImage(canvas, xMin, yMin, out.width, out.height, 0, 0, out.width, out.height);
+    return out;
+  }
+
+  $('#lancer').addEventListener('click', async () => {
+    try {
+      etat(msg, 'Traitement…');
+      let canvas;
+
+      if ($('#methode').value === 'dessin') {
+        if (!aDessine) throw new Error('Dessinez d’abord votre signature dans le cadre.');
+        canvas = rogner(planche);
+      } else {
+        if (!photo) throw new Error('Importez d’abord la photo de votre signature.');
+        canvas = rogner(detourer(photo, parseInt($('#seuil').value, 10) / 100));
+      }
+
+      if (!canvas) throw new Error('Aucun trait détecté. Augmentez la sensibilité ou refaites la photo avec plus de lumière.');
+
+      sortie = await versBlob(canvas, 'image/png');
+      $('#apercu').src = URL.createObjectURL(sortie);
+      $('#dims').textContent = `${canvas.width}×${canvas.height} px`;
+      $('#taille').textContent = poids(sortie.size);
+      resultat.hidden = false;
+      etat(msg, 'Signature prête.');
+      $('#telecharger').onclick = () => telecharger(sortie, 'signature.png');
+    } catch (e) {
+      etat(msg, e.message, true);
+    }
+  });
+</script>

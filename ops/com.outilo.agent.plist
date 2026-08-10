@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+  <key>Label</key>
+  <string>com.outilo.agent</string>
+
+  <key>ProgramArguments</key>
+  <array>
+    <string>/bin/bash</string>
+    <string>CHEMIN_DU_PROJET/agent/run.sh</string>
+  </array>
+
+  <!-- Tous les jours à 9 h 12. Heure décalée volontairement :
+       si la machine dort, launchd rattrape l'exécution au réveil. -->
+  <key>StartCalendarInterval</key>
+  <dict>
+    <key>Hour</key><integer>9</integer>
+    <key>Minute</key><integer>12</integer>
+  </dict>
+
+  <key>WorkingDirectory</key>
+  <string>CHEMIN_DU_PROJET</string>
+
+  <key>StandardOutPath</key>
+  <string>CHEMIN_DU_PROJET/agent/logs/launchd.out.log</string>
+  <key>StandardErrorPath</key>
+  <string>CHEMIN_DU_PROJET/agent/logs/launchd.err.log</string>
+
+  <key>EnvironmentVariables</key>
+  <dict>
+    <key>PATH</key>
+    <string>/opt/homebrew/bin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin</string>
+  </dict>
+
+  <key>RunAtLoad</key>
+  <false/>
+  <key>ProcessType</key>
+  <string>Background</string>
+</dict>
+</plist>

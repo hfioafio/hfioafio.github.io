@@ -1,0 +1,159 @@
+<div class="tool">
+  <div class="dropzone" id="zone">
+    <strong>Choisir une image</strong>
+    <span>ou glissez-la ici — JPG, PNG, WebP, GIF</span>
+  </div>
+
+  <div class="controls">
+    <div class="field">
+      <label for="cible">Poids maximal souhaité</label>
+      <input type="number" id="cible" value="1" min="0.01" step="0.1">
+      <span class="hint">Le fichier final sera garanti sous cette valeur.</span>
+    </div>
+    <div class="field">
+      <label for="unite">Unité</label>
+      <select id="unite">
+        <option value="1048576" selected>Mo</option>
+        <option value="1024">Ko</option>
+      </select>
+    </div>
+    <div class="field">
+      <label for="format">Format de sortie</label>
+      <select id="format">
+        <option value="image/jpeg" selected>JPG (le plus léger)</option>
+        <option value="image/webp">WebP (qualité supérieure)</option>
+      </select>
+    </div>
+  </div>
+
+  <div class="actions">
+    <button id="lancer" disabled>Compresser</button>
+    <span class="status" id="etat">Aucune image sélectionnée.</span>
+  </div>
+
+  <div class="result" id="resultat" hidden>
+    <img class="preview" id="apercu" alt="Aperçu de l'image compressée">
+    <dl class="stats">
+      <div><dt>Avant</dt><dd id="avant">—</dd></div>
+      <div><dt>Après</dt><dd id="apres">—</dd></div>
+      <div><dt>Réduction</dt><dd id="gain">—</dd></div>
+      <div><dt>Dimensions</dt><dd id="dims">—</dd></div>
+    </dl>
+    <button id="telecharger">Télécharger l'image</button>
+  </div>
+
+  <p class="privacy-note">
+    <span aria-hidden="true">🔒</span>
+    <span>Votre image est traitée par votre navigateur et n'est envoyée sur aucun serveur. Vous pouvez même couper votre connexion Internet avant de cliquer sur « Compresser ».</span>
+  </p>
+</div>
+
+<div class="prose">
+  <h2>Pourquoi viser un poids précis plutôt qu'un pourcentage</h2>
+  <p>La plupart des compresseurs vous proposent un curseur de qualité et vous laissent deviner. Or le besoin réel est presque toujours un seuil imposé : <strong>« 1 Mo maximum »</strong> sur un téléservice, <strong>« 500 Ko »</strong> pour une pièce jointe, <strong>« 2 Mo »</strong> pour un dossier de candidature. Cet outil fait l'inverse : vous donnez le plafond, il cherche automatiquement la meilleure qualité qui tient dessous.</p>
+  <p>Concrètement, il teste plusieurs niveaux de compression par dichotomie et, si le plafond reste inatteignable, réduit progressivement les dimensions. Vous obtenez donc toujours la version la plus nette possible pour le poids demandé.</p>
+
+  <h2>Les plafonds les plus courants en France</h2>
+  <div class="scroll-x">
+    <table>
+      <thead>
+        <tr><th>Démarche</th><th>Limite fréquente</th><th>Réglage conseillé</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>Téléservices administratifs</td><td>1 à 5 Mo</td><td>1 Mo en JPG</td></tr>
+        <tr><td>Pièce jointe e-mail</td><td>20 à 25 Mo au total</td><td>500 Ko par image</td></tr>
+        <tr><td>Photo de profil</td><td>1 à 2 Mo</td><td>300 Ko en JPG</td></tr>
+        <tr><td>Dépôt de candidature</td><td>2 Mo</td><td>1,5 Mo en JPG</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p class="hint" style="font-size:.85rem;color:var(--muted)">Ces valeurs sont indicatives : vérifiez toujours la limite affichée par le site sur lequel vous déposez le fichier.</p>
+
+  <h2>Questions fréquentes</h2>
+
+  <details>
+    <summary>Mes fichiers sont-ils envoyés sur un serveur&nbsp;?</summary>
+    <p>Non. La compression utilise l'API Canvas de votre navigateur. Aucune requête réseau n'est effectuée avec le contenu de votre image, et le site fonctionne même hors ligne une fois la page chargée.</p>
+  </details>
+
+  <details>
+    <summary>Quelle différence entre JPG et WebP&nbsp;?</summary>
+    <p>À poids égal, le WebP conserve nettement plus de détails que le JPG. Mais certains sites administratifs ou logiciels anciens refusent encore ce format. En cas de doute, choisissez le JPG : il est accepté partout.</p>
+  </details>
+
+  <details>
+    <summary>Pourquoi mon image devient-elle floue&nbsp;?</summary>
+    <p>Parce que le plafond demandé est trop bas pour ses dimensions. Une photo de 12 mégapixels ramenée à 100 Ko perd forcément beaucoup. Augmentez le plafond, ou acceptez la réduction de dimensions que l'outil applique automatiquement.</p>
+  </details>
+
+  <details>
+    <summary>La transparence de mon PNG est-elle conservée&nbsp;?</summary>
+    <p>En JPG, non : ce format ne gère pas la transparence, les zones transparentes deviennent blanches. Choisissez le WebP si vous devez garder un fond transparent.</p>
+  </details>
+
+  <details>
+    <summary>Y a-t-il une limite au nombre d'images&nbsp;?</summary>
+    <p>Aucune. Il n'y a ni compte, ni quota horaire, ni filigrane. Le seul facteur limitant est la mémoire de votre appareil sur des images très volumineuses.</p>
+  </details>
+</div>
+
+<script type="module">
+  import { $, poids, zoneDepot, chargerImage, compresserSous, telecharger, renommer, etat }
+    from '/assets/outil.js';
+
+  let fichier = null, sortie = null, source = null;
+
+  const zone = $('#zone'), bouton = $('#lancer'), msg = $('#etat'), resultat = $('#resultat');
+
+  zoneDepot(zone, async ([f]) => {
+    fichier = f;
+    resultat.hidden = true;
+    etat(msg, `Chargement de « ${f.name} »…`);
+    try {
+      source = await chargerImage(f);
+      bouton.disabled = false;
+      etat(msg, `${f.name} — ${poids(f.size)}, ${source.width}×${source.height} px`);
+      zone.querySelector('strong').textContent = f.name;
+    } catch (e) {
+      bouton.disabled = true;
+      etat(msg, e.message, true);
+    }
+  });
+
+  bouton.addEventListener('click', async () => {
+    if (!source) return;
+    bouton.disabled = true;
+    etat(msg, 'Recherche du meilleur réglage…');
+
+    const cible = parseFloat($('#cible').value) * parseInt($('#unite').value, 10);
+    const type = $('#format').value;
+
+    try {
+      const debut = performance.now();
+      const r = await compresserSous(source, cible, type, (n) =>
+        etat(msg, `Recherche du meilleur réglage… (essai ${n})`)
+      );
+      if (!r) {
+        etat(msg, 'Impossible de descendre sous ce poids sans détruire l’image. Essayez une valeur plus élevée.', true);
+        return;
+      }
+      sortie = r.blob;
+      const ext = type === 'image/webp' ? 'webp' : 'jpg';
+      $('#apercu').src = URL.createObjectURL(sortie);
+      $('#avant').textContent = poids(fichier.size);
+      $('#apres').textContent = poids(sortie.size);
+      $('#gain').textContent = `− ${Math.max(0, Math.round((1 - sortie.size / fichier.size) * 100))} %`;
+      $('#dims').textContent = `${Math.round(source.width * r.echelle)}×${Math.round(source.height * r.echelle)} px`;
+      resultat.hidden = false;
+      const secondes = ((performance.now() - debut) / 1000).toFixed(1);
+      etat(msg, r.echelle < 1
+        ? `Terminé en ${secondes} s — dimensions réduites à ${Math.round(r.echelle * 100)} % pour tenir sous la limite.`
+        : `Terminé en ${secondes} s — dimensions d’origine conservées.`);
+      $('#telecharger').onclick = () => telecharger(sortie, renommer(fichier.name, ext));
+    } catch (e) {
+      etat(msg, e.message, true);
+    } finally {
+      bouton.disabled = false;
+    }
+  });
+</script>

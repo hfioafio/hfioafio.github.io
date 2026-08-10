@@ -1,0 +1,21 @@
+{
+  "site": {
+    "name": "Outilo",
+    "tagline": "Des outils qui marchent, dans votre navigateur.",
+    "baseUrl": "https://outilo.pages.dev",
+    "lang": "fr",
+    "email": "contact@example.com",
+    "editor": "À COMPLÉTER",
+    "cloudflareAnalyticsToken": "",
+    "searchConsoleVerification": "",
+    "adsenseClientId": "",
+    "adsEnabled": false
+  },
+  "_comment": "adsEnabled reste false tant qu'AdSense n'a pas validé le site. Le build injecte les emplacements pub uniquement si adsEnabled=true ET adsenseClientId non vide.",
+  "categories": {
+    "image": { "label": "Images & photos", "icon": "▣" },
+    "pdf": { "label": "PDF & documents", "icon": "▤" },
+    "texte": { "label": "Texte & données", "icon": "▦" },
+    "calcul": { "label": "Calculs du quotidien", "icon": "▧" }
+  }
+}
