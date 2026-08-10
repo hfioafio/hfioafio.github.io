@@ -9,8 +9,9 @@ une préférence.
 L'ordre compte : chaque étape débloque la suivante. **L'étape 0 est celle sans
 laquelle rien ne tourne tout seul** ; les étapes 1 à 3 mettent le site en ligne.
 
-Tout le reste est fait : sept outils écrits et testés, le générateur, les pages
-légales, l'agent quotidien installé dans launchd et son déclencheur programmé.
+**Le site est en ligne : https://hfioafio.github.io/** — sept outils testés en
+production, déploiement automatique à chaque modification, et agent quotidien
+planifié. Les étapes 0 à 2 sont faites.
 
 ---
 
@@ -126,31 +127,34 @@ Sans cookie, donc sans bandeau de consentement à ce stade.
 
 ---
 
-## 6. L'agent autonome — déjà installé
+## 6. L'agent autonome — fait, mais pas par launchd
 
-Rien à faire : je l'ai installé et vérifié dans launchd (`com.outilo.agent`). Il se
-déclenchera chaque jour à 9 h 12, créera un outil ou améliorera une page, testera,
-publiera, et écrira ce qu'il a fait dans `agent/journal.md`.
+Rien à faire. La planification passe par le **planificateur intégré de
+l'application Claude** : tâche `outilo-quotidien`, tous les jours à 9 h 12,
+visible dans la section « Scheduled » de la barre latérale.
 
-Il ne pourra travailler qu'une fois l'étape 0 faite. En attendant, il se contentera
-de t'envoyer une notification à chaque réveil.
+Pourquoi pas launchd, comme prévu au départ : lancé par launchd, le CLI Claude
+répond « Not logged in » — son accès au trousseau dépend d'un contexte
+d'application graphique. Testé avec `SessionCreate`, puis via Terminal : les deux
+échouent sans une autorisation système que tu es seul à pouvoir accorder. La tâche
+launchd a donc été désinstallée pour qu'elle n'échoue pas en silence chaque matin.
 
-Pour le voir travailler tout de suite :
+**La contrepartie, à connaître :** la tâche ne s'exécute que si l'application
+Claude est ouverte. Si elle était fermée à 9 h 12, l'exécution a lieu au lancement
+suivant. Ce n'est pas plus contraignant que l'ancienne solution, qui exigeait déjà
+que le Mac soit allumé.
+
+Conseil : clique une fois sur **« Run now »** dans la section Scheduled. Les
+autorisations d'outils accordées pendant cette exécution sont mémorisées, ce qui
+évite que les exécutions suivantes se bloquent sur une demande de permission.
+
+Pour un déclenchement manuel depuis un terminal, à tout moment :
 
 ```bash
-launchctl kickstart -k gui/$(id -u)/com.outilo.agent
+bash ~/outilo/agent/run.sh
 ```
 
-Pour l'arrêter définitivement, à tout moment :
-
-```bash
-launchctl bootout gui/$(id -u)/com.outilo.agent
-```
-
-**Deux conditions matérielles.** Ton Mac doit être allumé à cette heure-là — s'il
-dort, macOS rattrape l'exécution au réveil, mais s'il est éteint, la journée est
-perdue. Et l'agent consomme ton abonnement Claude Code : une exécution par jour reste
-modeste, mais ce n'est pas gratuit au sens strict.
+Pour tout arrêter : supprime la tâche depuis la section « Scheduled ».
 
 ---
 

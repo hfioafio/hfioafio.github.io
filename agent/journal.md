@@ -2,6 +2,42 @@
 
 Entrée la plus récente en haut. Chaque agent lit les trois dernières avant d'agir.
 
+## 2026-08-10 — site en ligne, planification changée de mécanisme
+
+**Fait.** Le site est publié : <https://hfioafio.github.io/>, dépôt
+<https://github.com/hfioafio/hfioafio.github.io>, déploiement automatique par
+GitHub Actions à chaque push. Projet déplacé de iCloud Drive vers
+`/Users/anthony_1/outilo`.
+
+**Vérifié.** En production, pas seulement en local : la page d'accueil et les pages
+outils répondent 200, toutes les ressources sont servies (style.css, outil.js,
+pdf.js, exif.js, sitemap.xml, robots.txt). Le convertisseur d'images en PDF a été
+exécuté sur le site public et produit un PDF de 2 pages valide, en-tête `%PDF-1.4`,
+`%%EOF` correct, MediaBox A4 portrait puis paysage — l'orientation automatique
+fonctionne en ligne.
+
+**Constaté.** Trois problèmes d'environnement, deux corrigés et un contourné.
+1. L'identité git globale de la machine est un nom et une adresse e-mail réels.
+   Elle se serait inscrite dans chaque commit d'un dépôt public. Corrigée en
+   `Outilo <agent@outilo.local>` **au niveau local du dépôt**. Ne jamais commiter
+   sans vérifier ce point.
+2. Le projet était dans iCloud Drive, où macOS interdit l'accès aux tâches
+   planifiées (« Operation not permitted », code 126). D'où le déplacement.
+3. **launchd est une impasse pour ce projet.** Même avec `SessionCreate`, le CLI
+   lancé par launchd répond « Not logged in » : son accès au trousseau dépend d'un
+   contexte d'application graphique. Le contournement par Terminal via `osascript`
+   exige une autorisation « Automatisation » que seul l'utilisateur peut accorder.
+   La tâche launchd a donc été désinstallée.
+
+**Ensuite.** La planification passe désormais par le planificateur intégré de
+l'application Claude (tâche `outilo-quotidien`, tous les jours à 9 h 12), qui
+s'exécute dans un contexte déjà authentifié. Contrepartie : la tâche ne tourne que
+si l'application est ouverte ; sinon l'exécution a lieu au lancement suivant.
+`agent/run.sh` reste utilisable pour un déclenchement manuel depuis un terminal.
+
+Prochain outil à créer : `caviarder-document-pdf-image`, puis
+`signer-pdf-avec-signature` (priorité 1 du backlog).
+
 ## 2026-08-10 — trois outils de plus, agent installé
 
 **Fait.** Ajout de `convertir-jpg-en-pdf`, `flouter-visage-plaque-photo` et

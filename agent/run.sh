@@ -43,24 +43,16 @@ if ! command -v claude >/dev/null 2>&1; then
   exit 1
 fi
 
-# Un agent qui échoue en silence tous les matins est pire que pas d'agent du tout.
-# On vérifie l'authentification AVANT de lancer la mission, et on alerte à l'écran.
-SONDE="$(timeout 90 claude -p 'Réponds exactement: PRET' --allowedTools 'Read' 2>&1 | tail -2)"
-if ! printf '%s' "$SONDE" | grep -q 'PRET'; then
-  {
-    echo "[$(date)] ARRÊT : le CLI Claude ne répond pas correctement."
-    echo "         Réponse obtenue : $SONDE"
-    echo "         Cause la plus probable : session non authentifiée."
-    echo "         Correctif : ouvrir un Terminal, lancer 'claude', puis /login."
-  } >> "$SORTIE"
-  osascript -e 'display notification "Agent Outilo bloqué : le CLI Claude n’est pas authentifié. Ouvrez un Terminal, lancez claude puis /login." with title "Outilo"' 2>/dev/null
-  exit 1
-fi
-
+# Pas de sonde préalable : elle consommait une invocation entière et son délai
+# d'attente se déclenchait avant même que le CLI ait fini de démarrer. On lance
+# directement la mission, puis on diagnostique sa sortie.
+#
 # Permissions volontairement étroites : l'agent peut écrire dans le projet,
 # construire, tester et publier — rien d'autre. Pas de suppression, pas de
 # commande arbitraire, pas d'installation de paquet.
-claude -p "$(cat agent/quotidien.md)" \
+DEBUT_MISSION="$(wc -c < "$SORTIE" 2>/dev/null || echo 0)"
+
+timeout 3600 claude -p "$(cat agent/quotidien.md)" \
   --permission-mode acceptEdits \
   --allowedTools \
     "Read" "Write" "Edit" "Glob" "Grep" "WebSearch" "WebFetch" \
@@ -73,6 +65,22 @@ claude -p "$(cat agent/quotidien.md)" \
   >> "$SORTIE" 2>&1
 
 CODE=$?
+
+# Diagnostic a posteriori : on ne regarde que ce que la mission vient d'écrire.
+MISSION="$(tail -c "+$((DEBUT_MISSION + 1))" "$SORTIE" 2>/dev/null)"
+ALERTE=""
+if printf '%s' "$MISSION" | grep -qi 'not logged in\|please run /login'; then
+  ALERTE="Session non authentifiée. Ouvrez un Terminal, lancez claude puis /login."
+elif [ "$CODE" -eq 124 ]; then
+  ALERTE="La mission a dépassé une heure et a été interrompue."
+elif [ -z "$(printf '%s' "$MISSION" | tr -d '[:space:]')" ]; then
+  ALERTE="Le CLI n'a produit aucune sortie (code $CODE)."
+fi
+
+if [ -n "$ALERTE" ]; then
+  echo "[$(date)] ÉCHEC : $ALERTE" >> "$SORTIE"
+  osascript -e "display notification \"$ALERTE\" with title \"Agent Outilo bloqué\"" 2>/dev/null
+fi
 
 {
   echo "[$(date)] Terminé (code $CODE)"
