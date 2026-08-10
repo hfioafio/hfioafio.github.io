@@ -1,0 +1,270 @@
+<div class="tool">
+  <div class="dropzone" id="zone">
+    <strong>Choisir une photo</strong>
+    <span>ou glissez-la ici — JPG, PNG, WebP</span>
+  </div>
+
+  <div id="atelier" hidden style="margin-top:1.5rem">
+    <canvas id="toile" style="width:100%;height:auto;touch-action:none;cursor:crosshair;border:1px solid var(--border);border-radius:7px;display:block"
+      aria-label="Photo à masquer : tracez un rectangle sur chaque zone"></canvas>
+    <p class="status" style="margin-top:.5rem">Tracez un rectangle sur chaque visage, plaque ou information à masquer. Vous pouvez en tracer autant que nécessaire.</p>
+
+    <div class="controls">
+      <div class="field">
+        <label for="effet">Type de masquage</label>
+        <select id="effet">
+          <option value="pixel" selected>Pixellisation</option>
+          <option value="flou">Flou</option>
+          <option value="noir">Rectangle noir opaque</option>
+        </select>
+      </div>
+      <div class="field">
+        <label for="force">Intensité <span id="fval">18</span></label>
+        <input type="range" id="force" min="6" max="60" value="18">
+        <span class="hint">Plus la valeur est haute, moins la zone est reconstituable.</span>
+      </div>
+      <div class="field">
+        <label for="sortie">Format de sortie</label>
+        <select id="sortie">
+          <option value="image/jpeg" selected>JPG</option>
+          <option value="image/png">PNG</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="actions">
+      <button id="appliquer" disabled>Appliquer et télécharger</button>
+      <button id="annuler" class="secondary" disabled>Annuler la dernière zone</button>
+      <button id="vider" class="secondary">Tout effacer</button>
+      <span class="status" id="etat">Aucune zone tracée.</span>
+    </div>
+  </div>
+
+  <p class="privacy-note">
+    <span aria-hidden="true">🔒</span>
+    <span>Une photo à anonymiser est par nature sensible. Elle reste sur votre appareil : aucun envoi, aucun stockage, aucune analyse automatique de visage.</span>
+  </p>
+</div>
+
+<div class="prose">
+  <h2>Un rectangle noir dans un éditeur ne suffit pas toujours</h2>
+  <p>Masquer une information en dessinant un rectangle par-dessus dans un lecteur de PDF ou un outil de bureau est une erreur courante : le contenu d'origine reste souvent présent dans le fichier, sous le rectangle. Ici, les pixels de la zone sont réellement remplacés dans l'image finale. Il n'existe aucune couche à retirer et aucune donnée à récupérer.</p>
+  <p>Attention en revanche à l'intensité. Une pixellisation trop légère sur du texte — une plaque, un numéro de compte — peut être devinée, car le nombre de combinaisons possibles est faible. Pour du texte, préférez le rectangle noir ; pour un visage, une pixellisation à 20 ou plus est largement suffisante.</p>
+
+  <h2>Quand faut-il masquer&nbsp;?</h2>
+  <ul>
+    <li><strong>Revente d'un véhicule</strong> — la plaque d'immatriculation permet de remonter au titulaire ; les annonces la masquent presque toujours.</li>
+    <li><strong>Photos où figurent d'autres personnes</strong> — en France, le droit à l'image impose en principe l'accord de chaque personne reconnaissable avant publication.</li>
+    <li><strong>Enfants</strong> — leur image est particulièrement protégée, et la publication requiert l'accord des deux parents.</li>
+    <li><strong>Justificatifs partagés</strong> — un RIB, une adresse ou un numéro de sécurité sociale visible sur un document photographié.</li>
+  </ul>
+  <p style="font-size:.85rem;color:var(--muted)">Information générale, qui ne constitue pas un conseil juridique.</p>
+
+  <h2>N'oubliez pas les métadonnées</h2>
+  <p>Masquer un visage ne suffit pas toujours à anonymiser une photo : le fichier contient aussi, le plus souvent, la date de prise de vue, le modèle de l'appareil et parfois les coordonnées GPS exactes. L'export de cet outil, produit à partir d'un canvas, ne conserve aucune de ces données. Pour nettoyer une photo sans la modifier visuellement, utilisez l'outil de <a href="/outils/supprimer-metadonnees-exif-photo/">suppression des métadonnées</a>.</p>
+
+  <h2>Questions fréquentes</h2>
+
+  <details>
+    <summary>Le flou est-il réversible&nbsp;?</summary>
+    <p>Non. Les pixels d'origine sont écrasés au moment de l'export : ils ne figurent nulle part dans le fichier produit. Contrairement à un calque posé dans un éditeur, il n'y a rien à retirer pour retrouver l'image initiale.</p>
+  </details>
+
+  <details>
+    <summary>Quelle intensité choisir&nbsp;?</summary>
+    <p>Pour un visage, une pixellisation de 18 à 25 rend l'identification impossible. Pour du texte — plaque, numéro, adresse — utilisez plutôt le rectangle noir : une pixellisation, même forte, laisse subsister une structure exploitable par recoupement.</p>
+  </details>
+
+  <details>
+    <summary>Puis-je masquer plusieurs zones&nbsp;?</summary>
+    <p>Oui, sans limite. Chaque rectangle tracé s'ajoute aux précédents, et vous pouvez annuler le dernier ou tout effacer avant l'export.</p>
+  </details>
+
+  <details>
+    <summary>La photo est-elle envoyée sur un serveur pour détecter les visages&nbsp;?</summary>
+    <p>Non, et c'est un choix assumé : il n'y a aucune détection automatique. Vous désignez vous-même les zones. Une détection automatique supposerait soit d'envoyer votre photo à un service tiers, soit de télécharger un modèle de plusieurs mégaoctets — deux options contraires à la promesse du site.</p>
+  </details>
+
+  <details>
+    <summary>La qualité du reste de l'image est-elle affectée&nbsp;?</summary>
+    <p>Les zones non masquées sont conservées à leur résolution d'origine. Un export en JPG applique néanmoins une compression : choisissez le PNG si l'image doit rester strictement identique en dehors des zones traitées.</p>
+  </details>
+</div>
+
+<script type="module">
+  import { $, zoneDepot, chargerImage, versBlob, telecharger, renommer, etat } from '/assets/outil.js';
+
+  let source = null, fichier = null;
+  const zones = [];                       // rectangles en coordonnées image
+  const toile = $('#toile');
+  const ctx = toile.getContext('2d');
+  const msg = $('#etat');
+
+  $('#force').addEventListener('input', (e) => { $('#fval').textContent = e.target.value; redessiner(); });
+  $('#effet').addEventListener('change', redessiner);
+
+  zoneDepot($('#zone'), async ([f]) => {
+    try {
+      fichier = f;
+      source = await chargerImage(f);
+      // On plafonne l'affichage, mais l'export se fera en pleine résolution.
+      toile.width = source.width;
+      toile.height = source.height;
+      zones.length = 0;
+      $('#atelier').hidden = false;
+      $('#zone').querySelector('strong').textContent = f.name;
+      redessiner();
+      etat(msg, `${f.name} — ${source.width}×${source.height} px. Tracez une zone.`);
+    } catch (e) {
+      etat(msg, e.message, true);
+    }
+  });
+
+  /** Applique un masquage sur une zone du contexte donné. */
+  function masquer(contexte, z, effet, force) {
+    const { x, y, l, h } = z;
+    if (l < 2 || h < 2) return;
+
+    if (effet === 'noir') {
+      contexte.fillStyle = '#000';
+      contexte.fillRect(x, y, l, h);
+      return;
+    }
+
+    if (effet === 'flou') {
+      // On passe par un canvas intermédiaire : dessiner un canvas sur lui-même
+      // avec un filtre actif n'est pas fiable sur tous les navigateurs.
+      const rayon = Math.round(force / 1.4);
+      const debord = rayon * 2;                  // marge pour éviter les bords clairs
+      const tampon = document.createElement('canvas');
+      tampon.width = l + debord * 2;
+      tampon.height = h + debord * 2;
+      const tctx = tampon.getContext('2d');
+      // On recopie la zone élargie, en la bornant à l'image.
+      tctx.drawImage(
+        contexte.canvas,
+        Math.max(0, x - debord), Math.max(0, y - debord),
+        Math.min(tampon.width, contexte.canvas.width - Math.max(0, x - debord)),
+        Math.min(tampon.height, contexte.canvas.height - Math.max(0, y - debord)),
+        0, 0, tampon.width, tampon.height
+      );
+      const flou = document.createElement('canvas');
+      flou.width = tampon.width; flou.height = tampon.height;
+      const fctx = flou.getContext('2d');
+      fctx.filter = `blur(${rayon}px)`;
+      fctx.drawImage(tampon, 0, 0);
+      fctx.filter = 'none';
+
+      contexte.drawImage(flou, debord, debord, l, h, x, y, l, h);
+      return;
+    }
+
+    // Pixellisation : sous-échantillonnage puis agrandissement sans lissage.
+    const pas = Math.max(2, Math.round(Math.min(l, h) / force * 3));
+    const petitL = Math.max(1, Math.round(l / pas));
+    const petitH = Math.max(1, Math.round(h / pas));
+    const tampon = document.createElement('canvas');
+    tampon.width = petitL; tampon.height = petitH;
+    const tctx = tampon.getContext('2d');
+    tctx.drawImage(contexte.canvas, x, y, l, h, 0, 0, petitL, petitH);
+    contexte.imageSmoothingEnabled = false;
+    contexte.drawImage(tampon, 0, 0, petitL, petitH, x, y, l, h);
+    contexte.imageSmoothingEnabled = true;
+  }
+
+  function redessiner(apercuZone = null) {
+    if (!source) return;
+    ctx.filter = 'none';
+    ctx.drawImage(source, 0, 0, toile.width, toile.height);
+    const effet = $('#effet').value;
+    const force = parseInt($('#force').value, 10);
+    for (const z of zones) masquer(ctx, z, effet, force);
+
+    if (apercuZone) {
+      ctx.save();
+      ctx.strokeStyle = '#1f6f4a';
+      ctx.lineWidth = Math.max(2, toile.width / 400);
+      ctx.setLineDash([ctx.lineWidth * 3, ctx.lineWidth * 2]);
+      ctx.strokeRect(apercuZone.x, apercuZone.y, apercuZone.l, apercuZone.h);
+      ctx.restore();
+    }
+
+    $('#appliquer').disabled = zones.length === 0;
+    $('#annuler').disabled = zones.length === 0;
+  }
+
+  /* --- Tracé des rectangles --- */
+
+  const versImage = (e) => {
+    const r = toile.getBoundingClientRect();
+    return {
+      x: (e.clientX - r.left) * (toile.width / r.width),
+      y: (e.clientY - r.top) * (toile.height / r.height),
+    };
+  };
+
+  let depart = null;
+  toile.addEventListener('pointerdown', (e) => {
+    if (!source) return;
+    depart = versImage(e);
+    toile.setPointerCapture(e.pointerId);
+  });
+  toile.addEventListener('pointermove', (e) => {
+    if (!depart) return;
+    e.preventDefault();
+    const p = versImage(e);
+    redessiner({
+      x: Math.min(depart.x, p.x), y: Math.min(depart.y, p.y),
+      l: Math.abs(p.x - depart.x), h: Math.abs(p.y - depart.y),
+    });
+  });
+  const terminer = (e) => {
+    if (!depart) return;
+    const p = versImage(e);
+    const z = {
+      x: Math.round(Math.min(depart.x, p.x)), y: Math.round(Math.min(depart.y, p.y)),
+      l: Math.round(Math.abs(p.x - depart.x)), h: Math.round(Math.abs(p.y - depart.y)),
+    };
+    depart = null;
+    if (z.l > 4 && z.h > 4) {
+      zones.push(z);
+      etat(msg, `${zones.length} zone(s) masquée(s).`);
+    }
+    redessiner();
+  };
+  toile.addEventListener('pointerup', terminer);
+  toile.addEventListener('pointercancel', () => { depart = null; redessiner(); });
+
+  $('#annuler').addEventListener('click', () => {
+    zones.pop();
+    etat(msg, zones.length ? `${zones.length} zone(s) masquée(s).` : 'Aucune zone tracée.');
+    redessiner();
+  });
+  $('#vider').addEventListener('click', () => {
+    zones.length = 0;
+    etat(msg, 'Aucune zone tracée.');
+    redessiner();
+  });
+
+  $('#appliquer').addEventListener('click', async () => {
+    if (!source || !zones.length) return;
+    try {
+      etat(msg, 'Application du masquage…');
+      const type = $('#sortie').value;
+      // Export depuis un canvas neuf : aucune trace des pixels d'origine.
+      const final = document.createElement('canvas');
+      final.width = source.width; final.height = source.height;
+      const fctx = final.getContext('2d');
+      if (type === 'image/jpeg') { fctx.fillStyle = '#fff'; fctx.fillRect(0, 0, final.width, final.height); }
+      fctx.drawImage(source, 0, 0);
+      const effet = $('#effet').value, force = parseInt($('#force').value, 10);
+      for (const z of zones) masquer(fctx, z, effet, force);
+
+      const blob = await versBlob(final, type, 0.92);
+      telecharger(blob, renommer(fichier.name, type === 'image/png' ? 'png' : 'jpg'));
+      etat(msg, `Image masquée téléchargée — ${zones.length} zone(s) traitée(s).`);
+    } catch (e) {
+      etat(msg, e.message, true);
+    }
+  });
+</script>

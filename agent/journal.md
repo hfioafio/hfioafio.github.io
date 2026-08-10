@@ -2,6 +2,49 @@
 
 Entrée la plus récente en haut. Chaque agent lit les trois dernières avant d'agir.
 
+## 2026-08-10 — trois outils de plus, agent installé
+
+**Fait.** Ajout de `convertir-jpg-en-pdf`, `flouter-visage-plaque-photo` et
+`supprimer-metadonnees-exif-photo`. Sept outils en ligne, douze au backlog.
+Deux modules nouveaux, tous deux écrits sans dépendance : `src/assets/pdf.js`
+(écriture de PDF, insertion des JPEG via DCTDecode sans réencodage) et
+`src/assets/exif.js` (lecture des champs EXIF et conversion GPS).
+
+**Vérifié.**
+- *PDF* : fichier généré depuis Node, puis accepté par trois moteurs indépendants —
+  libmagic (« PDF document, version 1.4, 2 pages »), QuickLook (vignette produite) et
+  ImageIO (page 1 rendue en 842 × 595, soit A4 paysage, orientation automatique
+  correcte). Le rendu affiche bien l'image, centrée avec ses marges.
+- *EXIF* : testé sur un JPEG fabriqué octet par octet avec bloc APP1 complet.
+  Fabricant, modèle et date lus correctement ; GPS 48° 51′ 30,24″ N / 2° 17′ 40,2″ E
+  converti en 48.8584 / 2.2945, exact. Contrôle négatif : un JPEG sans EXIF renvoie
+  bien `null`.
+- *Masquage* : pixellisation 251 → 18 couleurs distinctes ; mode noir uniformément
+  `rgb(0,0,0)` ; flou, écart-type local 119 → 1,5 (−99 %), sans halo de bord et sans
+  altérer le reste de l'image.
+
+**Constaté.** Deux choses.
+1. Le flou dessinait le canvas sur lui-même avec un filtre actif — accepté par Chrome
+   mais au comportement variable ailleurs. Réécrit avec un canvas intermédiaire et
+   un débord égal à deux fois le rayon, pour éviter l'éclaircissement des bords.
+2. **Blocage majeur : `claude -p` répond « Not logged in ».** Testé dans le bac à
+   sable et hors bac à sable, même résultat, alors que le trousseau contient bien un
+   élément « Claude Code-credentials ». La session de l'application de bureau ne vaut
+   pas authentification pour la ligne de commande. Conséquence : sans correctif,
+   l'agent aurait échoué **en silence** tous les matins. `agent/run.sh` teste
+   désormais l'authentification avant de commencer et envoie une notification macOS
+   en cas d'échec.
+
+**Décision requise.** Étape 0 de `ACTIONS-POUR-TOI.md` : ouvrir un Terminal, lancer
+`claude`, faire `/login`. Deux minutes, et c'est ce qui conditionne toute
+l'autonomie. Restent ensuite GitHub, Cloudflare et l'identité de l'éditeur.
+
+**Ensuite.** Une fois l'authentification faite et le dépôt distant en place :
+`caviarder-document-pdf-image` puis `signer-pdf-avec-signature` (priorité 1, et le
+module `pdf.js` maison couvre déjà l'écriture). Pour la lecture de PDF existants, il
+faudra soit étendre `pdf.js`, soit accepter pdf.js de Mozilla en chargement différé —
+arbitrer en tenant compte de la règle « tout doit marcher hors ligne ».
+
 ## 2026-08-10 — mise en place
 
 **Fait.** Création du projet : générateur statique sans dépendance (`build.mjs`),

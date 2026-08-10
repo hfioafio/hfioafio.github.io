@@ -65,5 +65,5 @@ structurées sont produits automatiquement.
 
 ## État
 
-Quatre outils en ligne, quinze au backlog. Publicité désactivée jusqu'à validation
+Sept outils en ligne, douze au backlog. Publicité désactivée jusqu'à validation
 AdSense. Voir `agent/journal.md` pour le détail courant.

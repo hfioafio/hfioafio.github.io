@@ -1,13 +1,41 @@
 # Ce que je ne peux pas faire à ta place
 
-Sept étapes, une seule fois, environ une heure au total. Ensuite tu n'interviens plus.
+Huit étapes, une seule fois, environ une heure au total. Ensuite tu n'interviens plus.
 
-Je ne peux légitimement pas faire les étapes 1, 2, 4 et 7 : elles exigent de créer des
-comptes et de saisir ton identité, tes coordonnées bancaires et tes informations
-fiscales. C'est une limite stricte de mon côté, pas une préférence.
+Les étapes 0, 1, 2, 4 et 7 exigent de te connecter, de créer des comptes ou de saisir
+ton identité et tes coordonnées bancaires. C'est une limite stricte de mon côté, pas
+une préférence.
 
-L'ordre compte : chaque étape débloque la suivante. Les étapes 1 à 3 suffisent à
-mettre le site en ligne et à lancer la machine.
+L'ordre compte : chaque étape débloque la suivante. **L'étape 0 est celle sans
+laquelle rien ne tourne tout seul** ; les étapes 1 à 3 mettent le site en ligne.
+
+Tout le reste est fait : sept outils écrits et testés, le générateur, les pages
+légales, l'agent quotidien installé dans launchd et son déclencheur programmé.
+
+---
+
+## 0. Authentifier le CLI Claude — 2 min
+
+**Sans ça, l'agent quotidien ne fera rien du tout.** Je l'ai testé : lancé depuis un
+script, `claude` répond « Not logged in ». Les identifiants de l'application de
+bureau ne servent pas à la ligne de commande.
+
+Ouvre le Terminal et lance :
+
+```bash
+claude
+```
+
+Puis tape `/login` et suis l'ouverture de page. Une fois connecté, quitte avec
+`/exit`. Pour vérifier que c'est bon :
+
+```bash
+claude -p "Réponds exactement: PRET"
+```
+
+Si tu vois `PRET`, l'agent pourra travailler. L'agent refait ce test à chaque
+exécution et t'envoie une notification macOS s'il est bloqué — il ne restera jamais
+en panne silencieuse.
 
 ---
 
@@ -98,19 +126,25 @@ Sans cookie, donc sans bandeau de consentement à ce stade.
 
 ---
 
-## 6. Lancer l'agent autonome — 5 min
+## 6. L'agent autonome — déjà installé
 
-```bash
-bash ops/installer-agent.sh
-```
+Rien à faire : je l'ai installé et vérifié dans launchd (`com.outilo.agent`). Il se
+déclenchera chaque jour à 9 h 12, créera un outil ou améliorera une page, testera,
+publiera, et écrira ce qu'il a fait dans `agent/journal.md`.
 
-L'agent se déclenchera chaque jour à 9 h 12 : il crée un outil ou améliore une page,
-teste, publie, et écrit ce qu'il a fait dans `agent/journal.md`.
+Il ne pourra travailler qu'une fois l'étape 0 faite. En attendant, il se contentera
+de t'envoyer une notification à chaque réveil.
 
 Pour le voir travailler tout de suite :
 
 ```bash
 launchctl kickstart -k gui/$(id -u)/com.outilo.agent
+```
+
+Pour l'arrêter définitivement, à tout moment :
+
+```bash
+launchctl bootout gui/$(id -u)/com.outilo.agent
 ```
 
 **Deux conditions matérielles.** Ton Mac doit être allumé à cette heure-là — s'il

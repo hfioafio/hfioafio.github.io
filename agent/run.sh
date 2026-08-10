@@ -39,8 +39,33 @@ if ! command -v claude >/dev/null 2>&1; then
   exit 1
 fi
 
+# Un agent qui échoue en silence tous les matins est pire que pas d'agent du tout.
+# On vérifie l'authentification AVANT de lancer la mission, et on alerte à l'écran.
+SONDE="$(timeout 90 claude -p 'Réponds exactement: PRET' --allowedTools 'Read' 2>&1 | tail -2)"
+if ! printf '%s' "$SONDE" | grep -q 'PRET'; then
+  {
+    echo "[$(date)] ARRÊT : le CLI Claude ne répond pas correctement."
+    echo "         Réponse obtenue : $SONDE"
+    echo "         Cause la plus probable : session non authentifiée."
+    echo "         Correctif : ouvrir un Terminal, lancer 'claude', puis /login."
+  } >> "$SORTIE"
+  osascript -e 'display notification "Agent Outilo bloqué : le CLI Claude n’est pas authentifié. Ouvrez un Terminal, lancez claude puis /login." with title "Outilo"' 2>/dev/null
+  exit 1
+fi
+
+# Permissions volontairement étroites : l'agent peut écrire dans le projet,
+# construire, tester et publier — rien d'autre. Pas de suppression, pas de
+# commande arbitraire, pas d'installation de paquet.
 claude -p "$(cat agent/quotidien.md)" \
   --permission-mode acceptEdits \
+  --allowedTools \
+    "Read" "Write" "Edit" "Glob" "Grep" "WebSearch" "WebFetch" \
+    "Bash(node build.mjs)" \
+    "Bash(node:*)" \
+    "Bash(git add:*)" "Bash(git commit:*)" "Bash(git push:*)" \
+    "Bash(git status:*)" "Bash(git log:*)" "Bash(git diff:*)" \
+    "Bash(python3 -m http.server:*)" \
+    "Bash(curl -sI localhost:*)" \
   >> "$SORTIE" 2>&1
 
 CODE=$?

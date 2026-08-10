@@ -62,5 +62,53 @@
     ],
     "status": "live",
     "createdAt": "2026-08-10"
+  },
+  {
+    "slug": "convertir-jpg-en-pdf",
+    "category": "pdf",
+    "title": "Convertir des images JPG ou PNG en PDF",
+    "h1": "Convertir des images en PDF",
+    "description": "Assemblez vos photos et captures en un seul PDF, dans l'ordre que vous choisissez. Le fichier est fabriqué par votre navigateur, sans téléversement et sans bibliothèque externe.",
+    "intent": "Déposer un justificatif photographié sur un téléservice qui n'accepte que le PDF.",
+    "keywords": [
+      "convertir jpg en pdf gratuit",
+      "photo en pdf en ligne",
+      "plusieurs images en un seul pdf",
+      "transformer une photo en pdf sans logiciel"
+    ],
+    "status": "live",
+    "createdAt": "2026-08-10"
+  },
+  {
+    "slug": "flouter-visage-plaque-photo",
+    "category": "image",
+    "title": "Flouter un visage ou une plaque sur une photo",
+    "h1": "Flouter un visage ou une plaque d'immatriculation",
+    "description": "Masquez définitivement un visage, une plaque d'immatriculation ou une information sensible sur une photo. Les pixels sont réellement remplacés, et rien n'est envoyé sur un serveur.",
+    "intent": "Publier une annonce de voiture, partager une photo où figurent des tiers, masquer un document.",
+    "keywords": [
+      "flouter un visage sur une photo gratuit",
+      "masquer plaque immatriculation photo",
+      "flouter une photo en ligne sans inscription",
+      "pixelliser une partie d'une image"
+    ],
+    "status": "live",
+    "createdAt": "2026-08-10"
+  },
+  {
+    "slug": "supprimer-metadonnees-exif-photo",
+    "category": "image",
+    "title": "Supprimer les métadonnées EXIF d'une photo (GPS, date, appareil)",
+    "h1": "Supprimer les métadonnées d'une photo",
+    "description": "Découvrez ce que votre photo révèle — position GPS, date, modèle d'appareil — puis téléchargez-en une version débarrassée de toute métadonnée. Analyse et nettoyage 100 % locaux.",
+    "intent": "Publier une photo sur une annonce ou l'envoyer sans divulguer le lieu de prise de vue.",
+    "keywords": [
+      "supprimer données exif photo",
+      "enlever géolocalisation photo",
+      "effacer métadonnées image en ligne",
+      "photo annonce leboncoin position gps"
+    ],
+    "status": "live",
+    "createdAt": "2026-08-10"
   }
 ]

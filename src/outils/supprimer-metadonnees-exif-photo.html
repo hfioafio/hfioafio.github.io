@@ -1,0 +1,152 @@
+<div class="tool">
+  <div class="dropzone" id="zone">
+    <strong>Choisir une photo</strong>
+    <span>ou glissez-la ici — l'analyse est immédiate et locale</span>
+  </div>
+
+  <div class="result" id="analyse" hidden>
+    <h3 style="margin-top:0">Ce que votre photo révèle</h3>
+    <div id="rapport"></div>
+  </div>
+
+  <div class="controls" id="reglages" hidden>
+    <div class="field">
+      <label for="format">Format de sortie</label>
+      <select id="format">
+        <option value="image/jpeg" selected>JPG</option>
+        <option value="image/png">PNG</option>
+      </select>
+    </div>
+    <div class="field">
+      <label for="qualite">Qualité <span id="qval">94 %</span></label>
+      <input type="range" id="qualite" min="70" max="100" value="94">
+      <span class="hint">Sans effet sur le PNG.</span>
+    </div>
+  </div>
+
+  <div class="actions">
+    <button id="lancer" disabled>Télécharger la photo nettoyée</button>
+    <span class="status" id="etat">Aucune photo sélectionnée.</span>
+  </div>
+
+  <p class="privacy-note">
+    <span aria-hidden="true">🔒</span>
+    <span>L'analyse comme le nettoyage se font dans votre navigateur. Votre position GPS, si elle est présente, n'est affichée qu'à vous et n'est transmise à personne.</span>
+  </p>
+</div>
+
+<div class="prose">
+  <h2>Ce qu'une photo transporte à votre insu</h2>
+  <p>Chaque photo prise avec un téléphone ou un appareil photo contient un bloc de métadonnées appelé EXIF. On y trouve couramment la date et l'heure exactes de la prise de vue, la marque et le modèle de l'appareil, les réglages employés, et — c'est le point sensible — <strong>les coordonnées GPS du lieu</strong>, à quelques mètres près.</p>
+  <p>Ces informations suivent le fichier partout. Une photo d'objet publiée sur un site de petites annonces peut ainsi indiquer l'adresse du domicile du vendeur. Une photo envoyée par messagerie peut révéler qu'elle a été prise ailleurs que là où l'on prétendait être.</p>
+  <p>Les grands réseaux sociaux suppriment généralement l'EXIF à la publication. Mais ce n'est le cas ni des sites de petites annonces, ni des envois par e-mail, ni des messageries qui transmettent le fichier d'origine, ni des dépôts sur des espaces partagés.</p>
+
+  <h2>Comment fonctionne le nettoyage</h2>
+  <p>La photo est décodée puis redessinée dans une zone graphique, et c'est cette nouvelle image qui est réenregistrée. Le fichier produit ne contient donc aucune métadonnée héritée : ni GPS, ni date, ni appareil, ni vignette intégrée. L'orientation, en revanche, est correctement appliquée — votre photo ne se retrouvera pas couchée.</p>
+  <p>Conséquence à connaître : le fichier est réencodé. En JPG, une compression est appliquée ; à 94 % elle est invisible, mais si vous devez conserver l'image strictement intacte pixel pour pixel, choisissez le PNG.</p>
+
+  <h2>Empêcher l'enregistrement de la position, à la source</h2>
+  <ul>
+    <li><strong>iPhone</strong> — Réglages › Confidentialité et sécurité › Service de localisation › Appareil photo › <em>Jamais</em>. Pour une photo déjà prise : Photos › Informations › Ajuster › Supprimer la position.</li>
+    <li><strong>Android</strong> — dans l'application Appareil photo, Paramètres › Balises de position (ou Enregistrer la position) › désactiver.</li>
+  </ul>
+
+  <h2>Questions fréquentes</h2>
+
+  <details>
+    <summary>Ma position est-elle envoyée quelque part pendant l'analyse&nbsp;?</summary>
+    <p>Non. Les octets du fichier sont lus directement par votre navigateur et les coordonnées sont affichées à l'écran. Aucune requête réseau n'est effectuée, et aucune carte n'est chargée depuis un service tiers — ce qui reviendrait à transmettre votre position.</p>
+  </details>
+
+  <details>
+    <summary>Pourquoi mon PNG n'affiche-t-il aucune métadonnée&nbsp;?</summary>
+    <p>Parce que le format PNG ne stocke pas d'EXIF au sens strict. Les captures d'écran et les images issues du web n'en contiennent donc généralement pas. L'outil vous le signale plutôt que d'inventer des données.</p>
+  </details>
+
+  <details>
+    <summary>La qualité de ma photo est-elle dégradée&nbsp;?</summary>
+    <p>Légèrement, si vous exportez en JPG : le réencodage applique une compression. À 94 % la différence n'est pas perceptible. Le PNG évite toute perte, au prix d'un fichier bien plus lourd.</p>
+  </details>
+
+  <details>
+    <summary>Les métadonnées peuvent-elles être récupérées ensuite&nbsp;?</summary>
+    <p>Non. Le fichier produit est reconstruit à partir des seuls pixels : les blocs de métadonnées ne sont pas masqués, ils n'existent tout simplement pas dans le nouveau fichier.</p>
+  </details>
+
+  <details>
+    <summary>Et si je veux garder la date mais retirer la position&nbsp;?</summary>
+    <p>Cet outil supprime l'ensemble du bloc, sans sélection possible. C'est un choix délibéré : une suppression partielle laisse presque toujours subsister des champs oubliés — vignette intégrée, données propres au fabricant — qui peuvent contenir la position.</p>
+  </details>
+</div>
+
+<script type="module">
+  import { $, poids, zoneDepot, chargerImage, versCanvas, versBlob, telecharger, renommer, etat }
+    from '/assets/outil.js';
+  import { lireExif } from '/assets/exif.js';
+
+  let fichier = null, source = null;
+  const msg = $('#etat');
+
+  $('#qualite').addEventListener('input', (e) => { $('#qval').textContent = `${e.target.value} %`; });
+
+  const echapper = (s) => { const d = document.createElement('div'); d.textContent = s; return d.innerHTML; };
+
+  zoneDepot($('#zone'), async ([f]) => {
+    fichier = f;
+    etat(msg, 'Analyse…');
+    try {
+      source = await chargerImage(f);
+      const exif = await lireExif(f);
+      const rapport = $('#rapport');
+
+      if (!exif || (!exif.champs.length && !exif.position)) {
+        rapport.innerHTML =
+          `<p class="status">Aucune métadonnée EXIF détectée dans ce fichier. ` +
+          `C'est le cas des captures d'écran, des PNG et des images déjà nettoyées. ` +
+          `Vous pouvez tout de même le réenregistrer pour en avoir la certitude.</p>`;
+      } else {
+        let html = '';
+        if (exif.position) {
+          html += `<p class="privacy-note" style="background:#fdecea;color:#7a2318">
+            <span aria-hidden="true">⚠</span>
+            <span><strong>Cette photo contient votre position exacte.</strong><br>
+            Latitude ${exif.position.lat}, longitude ${exif.position.lon}
+            ${exif.position.altitude !== undefined ? `, altitude ${exif.position.altitude} m` : ''}.<br>
+            Quiconque reçoit ce fichier peut retrouver ce lieu à quelques mètres près.</span></p>`;
+        }
+        if (exif.champs.length) {
+          html += `<div class="scroll-x"><table><thead><tr><th>Information</th><th>Valeur enregistrée</th></tr></thead><tbody>`;
+          for (const c of exif.champs) {
+            html += `<tr><td>${echapper(c.nom)}</td><td>${echapper(c.valeur)}</td></tr>`;
+          }
+          html += `</tbody></table></div>`;
+        }
+        html += `<p class="status" style="margin-top:1rem">Tout ceci sera supprimé du fichier téléchargé.</p>`;
+        rapport.innerHTML = html;
+      }
+
+      $('#analyse').hidden = false;
+      $('#reglages').hidden = false;
+      $('#lancer').disabled = false;
+      $('#zone').querySelector('strong').textContent = f.name;
+      etat(msg, `${f.name} — ${poids(f.size)}, ${source.width}×${source.height} px`);
+    } catch (e) {
+      etat(msg, e.message, true);
+    }
+  });
+
+  $('#lancer').addEventListener('click', async () => {
+    if (!source) return;
+    try {
+      etat(msg, 'Nettoyage…');
+      const type = $('#format').value;
+      const canvas = versCanvas(source, source.width, source.height,
+        type === 'image/jpeg' ? '#ffffff' : null);
+      const blob = await versBlob(canvas, type, parseInt($('#qualite').value, 10) / 100);
+      telecharger(blob, renommer(fichier.name, type === 'image/png' ? 'png' : 'jpg'));
+      etat(msg, `Photo nettoyée téléchargée — ${poids(blob.size)}, aucune métadonnée.`);
+    } catch (e) {
+      etat(msg, e.message, true);
+    }
+  });
+</script>

@@ -1,0 +1,229 @@
+<div class="tool">
+  <div class="dropzone" id="zone">
+    <strong>Choisir une ou plusieurs images</strong>
+    <span>ou glissez-les ici — elles deviendront les pages du PDF, dans l'ordre</span>
+  </div>
+
+  <div id="pages" class="pages-liste" hidden></div>
+
+  <div class="controls">
+    <div class="field">
+      <label for="format">Format de page</label>
+      <select id="format">
+        <option value="a4" selected>A4 (21 × 29,7 cm)</option>
+        <option value="a5">A5 (14,8 × 21 cm)</option>
+        <option value="letter">Lettre US (21,6 × 27,9 cm)</option>
+      </select>
+    </div>
+    <div class="field">
+      <label for="orientation">Orientation</label>
+      <select id="orientation">
+        <option value="auto" selected>Automatique (selon l'image)</option>
+        <option value="portrait">Portrait</option>
+        <option value="paysage">Paysage</option>
+      </select>
+    </div>
+    <div class="field">
+      <label for="marge">Marge <span id="mval">10 mm</span></label>
+      <input type="range" id="marge" min="0" max="30" value="10">
+    </div>
+    <div class="field">
+      <label for="qualite">Qualité <span id="qval">88 %</span></label>
+      <input type="range" id="qualite" min="50" max="98" value="88">
+      <span class="hint">Baissez si le PDF est trop lourd à envoyer.</span>
+    </div>
+  </div>
+
+  <div class="actions">
+    <button id="lancer" disabled>Créer le PDF</button>
+    <span class="status" id="etat">Aucune image sélectionnée.</span>
+  </div>
+
+  <div class="result" id="resultat" hidden>
+    <dl class="stats">
+      <div><dt>Pages</dt><dd id="nbpages">—</dd></div>
+      <div><dt>Poids du PDF</dt><dd id="poids">—</dd></div>
+      <div><dt>Format</dt><dd id="fmt">—</dd></div>
+    </dl>
+    <div class="actions" style="margin-top:0">
+      <button id="telecharger">Télécharger le PDF</button>
+      <a id="ouvrir" class="btn secondary" target="_blank" rel="noopener">Ouvrir dans un onglet</a>
+    </div>
+  </div>
+
+  <p class="privacy-note">
+    <span aria-hidden="true">🔒</span>
+    <span>Le PDF est fabriqué par votre navigateur, sans aucune bibliothèque externe ni serveur. Vos documents — pièces d'identité, justificatifs, factures — ne sont transmis nulle part.</span>
+  </p>
+</div>
+
+<div class="prose">
+  <h2>Pourquoi un PDF plutôt que des photos</h2>
+  <p>La plupart des téléservices et des services de ressources humaines demandent un PDF, et pour de bonnes raisons : un seul fichier au lieu de dix, un ordre de pages garanti, un rendu identique partout, et une impression prévisible. Envoyer six photos nommées <code>IMG_4471.JPG</code> revient à demander à quelqu'un de reconstituer votre dossier à votre place.</p>
+  <p>Le cas le plus fréquent : photographier un justificatif de domicile, un relevé ou une pièce d'identité avec son téléphone, et devoir le déposer en PDF. C'est exactement ce que fait cet outil.</p>
+
+  <h2>Obtenir un document lisible</h2>
+  <ul>
+    <li><strong>Cadrez à plat, au-dessus du document</strong>, pas de biais : un document photographié en perspective est souvent refusé.</li>
+    <li><strong>Évitez l'ombre de votre propre tête.</strong> Placez la feuille près d'une fenêtre, l'appareil légèrement décalé.</li>
+    <li><strong>Ne coupez aucun bord.</strong> Les administrations rejettent les documents tronqués, même d'un millimètre.</li>
+    <li><strong>Gardez la qualité au-dessus de 80 %</strong> si le document contient du texte fin ou un tampon.</li>
+  </ul>
+
+  <h2>Réduire le poids du fichier</h2>
+  <p>Si votre PDF dépasse la limite du site de dépôt, baissez d'abord la qualité vers 70 % : sur un document photographié, la différence est invisible et le poids peut être divisé par trois. Si cela ne suffit pas, réduisez d'abord chaque image avec l'outil de <a href="/outils/compresser-image-taille-precise/">compression à poids précis</a>, puis revenez ici.</p>
+
+  <h2>Questions fréquentes</h2>
+
+  <details>
+    <summary>Le texte de mon PDF sera-t-il sélectionnable&nbsp;?</summary>
+    <p>Non. Chaque page contient une image, pas du texte : c'est un PDF « image », comme celui que produit un scanner sans reconnaissance de caractères. Il est parfaitement valable pour un dépôt administratif, mais on ne peut ni y chercher un mot, ni copier son contenu.</p>
+  </details>
+
+  <details>
+    <summary>Dans quel ordre les pages sont-elles créées&nbsp;?</summary>
+    <p>Dans l'ordre où les images apparaissent dans la liste, que vous pouvez réorganiser avec les flèches avant de générer le fichier. Attention : lorsqu'on sélectionne plusieurs fichiers d'un coup, le système ne respecte pas toujours l'ordre alphabétique.</p>
+  </details>
+
+  <details>
+    <summary>Puis-je mélanger des photos portrait et paysage&nbsp;?</summary>
+    <p>Oui. En mode automatique, chaque page prend l'orientation de son image, ce qui évite les documents couchés. Choisissez une orientation fixe si vous voulez un PDF homogène, par exemple pour l'imprimer.</p>
+  </details>
+
+  <details>
+    <summary>Pourquoi mon image est-elle entourée de blanc&nbsp;?</summary>
+    <p>Parce que ses proportions diffèrent de celles de la page. L'image est centrée et intégralement conservée plutôt que rognée — un document coupé serait refusé. Réduisez la marge à 0 mm pour limiter cet espace.</p>
+  </details>
+
+  <details>
+    <summary>Le HEIC de mon iPhone fonctionne-t-il&nbsp;?</summary>
+    <p>Sur un appareil Apple, oui, Safari sait le lire. Sur Chrome ou Firefox sous Windows, non. Le plus simple est de régler votre iPhone sur « Le plus compatible » dans Réglages › Appareil photo › Formats, afin qu'il produise directement des JPG.</p>
+  </details>
+
+  <details>
+    <summary>Y a-t-il une limite de pages&nbsp;?</summary>
+    <p>Aucune limite imposée. Au-delà d'une cinquantaine de photos en pleine résolution, la mémoire de votre appareil devient le seul facteur limitant ; procédez alors en deux fichiers.</p>
+  </details>
+</div>
+
+<style>
+  .pages-liste { display: grid; grid-template-columns: repeat(auto-fill, minmax(9rem, 1fr)); gap: .75rem; margin-top: 1.25rem; }
+  .page-vignette { border: 1px solid var(--border); border-radius: 7px; padding: .5rem; background: var(--surface-2); }
+  .page-vignette img { width: 100%; height: 5.5rem; object-fit: contain; display: block; }
+  .page-vignette .nom { font-size: .74rem; color: var(--muted); margin: .35rem 0 .3rem; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .page-vignette .rang { display: flex; gap: .25rem; align-items: center; }
+  .page-vignette button { padding: .1rem .45rem; font-size: .8rem; background: transparent; color: var(--text); border-color: var(--border); }
+  .page-vignette .num { font-size: .74rem; color: var(--muted); margin-left: auto; }
+</style>
+
+<script type="module">
+  import { $, poids, zoneDepot, chargerImage, versCanvas, versBlob, telecharger, etat }
+    from '/assets/outil.js';
+  import { pdfDepuisJpeg, FORMATS } from '/assets/pdf.js';
+
+  let fichiers = [], pdf = null;
+  const zone = $('#zone'), bouton = $('#lancer'), msg = $('#etat'), resultat = $('#resultat');
+
+  $('#marge').addEventListener('input', (e) => { $('#mval').textContent = `${e.target.value} mm`; });
+  $('#qualite').addEventListener('input', (e) => { $('#qval').textContent = `${e.target.value} %`; });
+
+  function dessinerListe() {
+    const liste = $('#pages');
+    liste.hidden = fichiers.length === 0;
+    liste.innerHTML = '';
+    fichiers.forEach((f, i) => {
+      const el = document.createElement('div');
+      el.className = 'page-vignette';
+      const img = document.createElement('img');
+      img.src = URL.createObjectURL(f);
+      img.alt = '';
+      img.onload = () => URL.revokeObjectURL(img.src);
+      el.appendChild(img);
+
+      const nom = document.createElement('p');
+      nom.className = 'nom';
+      nom.textContent = f.name;
+      nom.title = f.name;
+      el.appendChild(nom);
+
+      const rang = document.createElement('div');
+      rang.className = 'rang';
+      const bougerG = document.createElement('button');
+      bougerG.textContent = '←'; bougerG.title = 'Reculer cette page';
+      bougerG.disabled = i === 0;
+      bougerG.onclick = () => { [fichiers[i - 1], fichiers[i]] = [fichiers[i], fichiers[i - 1]]; dessinerListe(); };
+      const bougerD = document.createElement('button');
+      bougerD.textContent = '→'; bougerD.title = 'Avancer cette page';
+      bougerD.disabled = i === fichiers.length - 1;
+      bougerD.onclick = () => { [fichiers[i + 1], fichiers[i]] = [fichiers[i], fichiers[i + 1]]; dessinerListe(); };
+      const retirer = document.createElement('button');
+      retirer.textContent = '×'; retirer.title = 'Retirer cette page';
+      retirer.onclick = () => { fichiers.splice(i, 1); dessinerListe(); maj(); };
+      const num = document.createElement('span');
+      num.className = 'num'; num.textContent = `p. ${i + 1}`;
+
+      rang.append(bougerG, bougerD, retirer, num);
+      el.appendChild(rang);
+      liste.appendChild(el);
+    });
+  }
+
+  function maj() {
+    bouton.disabled = fichiers.length === 0;
+    etat(msg, fichiers.length
+      ? `${fichiers.length} page(s) — ${poids(fichiers.reduce((s, f) => s + f.size, 0))}`
+      : 'Aucune image sélectionnée.');
+    resultat.hidden = true;
+  }
+
+  zoneDepot(zone, (fs) => {
+    fichiers = fichiers.concat(fs);
+    zone.querySelector('strong').textContent = 'Ajouter d’autres images';
+    dessinerListe();
+    maj();
+  }, { accept: 'image/*', multiple: true });
+
+  bouton.addEventListener('click', async () => {
+    if (!fichiers.length) return;
+    bouton.disabled = true;
+
+    const q = parseInt($('#qualite').value, 10) / 100;
+    const images = [];
+
+    try {
+      for (const [i, f] of fichiers.entries()) {
+        etat(msg, `Préparation de la page ${i + 1} / ${fichiers.length}…`);
+        await new Promise((r) => setTimeout(r, 0));
+        const img = await chargerImage(f);
+        // Fond blanc : un PNG transparent donnerait des zones noires en DeviceRGB.
+        const canvas = versCanvas(img, img.width, img.height, '#ffffff');
+        const blob = await versBlob(canvas, 'image/jpeg', q);
+        images.push({
+          octets: new Uint8Array(await blob.arrayBuffer()),
+          largeur: canvas.width,
+          hauteur: canvas.height,
+        });
+      }
+
+      etat(msg, 'Assemblage du PDF…');
+      pdf = pdfDepuisJpeg(images, {
+        format: $('#format').value,
+        orientation: $('#orientation').value,
+        marge: parseInt($('#marge').value, 10),
+      });
+
+      $('#nbpages').textContent = String(images.length);
+      $('#poids').textContent = poids(pdf.size);
+      $('#fmt').textContent = FORMATS[$('#format').value].nom;
+      const url = URL.createObjectURL(pdf);
+      $('#ouvrir').href = url;
+      $('#telecharger').onclick = () => telecharger(pdf, 'document.pdf');
+      resultat.hidden = false;
+      etat(msg, `PDF de ${images.length} page(s) prêt.`);
+    } catch (e) {
+      etat(msg, e.message, true);
+    } finally {
+      bouton.disabled = false;
+    }
+  });
+</script>

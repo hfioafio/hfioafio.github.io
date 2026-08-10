@@ -1,41 +1,15 @@
 [
   {
-    "slug": "flouter-visage-plaque-photo",
-    "category": "image",
-    "title": "Flouter un visage ou une plaque d'immatriculation sur une photo",
-    "priorite": 1,
-    "pourquoi": "Forte demande (revente de voiture, publication de photos d'enfants), très peu d'outils gratuits corrects, et l'argument « rien n'est téléversé » est décisif sur ce cas d'usage.",
-    "keywords": ["flouter un visage sur une photo gratuit", "masquer plaque immatriculation photo", "flouter une photo en ligne sans inscription"],
-    "faisabilite": "Canvas : sélection rectangulaire à la souris + filtre de flou par sous-échantillonnage. Aucune dépendance.",
-    "difficulte": "moyenne"
-  },
-  {
-    "slug": "supprimer-metadonnees-exif-photo",
-    "category": "image",
-    "title": "Supprimer les métadonnées EXIF d'une photo (GPS, date, appareil)",
-    "priorite": 1,
-    "pourquoi": "Cohérent avec le positionnement confidentialité du site. Beaucoup de gens ignorent que leurs photos contiennent leur position GPS.",
-    "keywords": ["supprimer données exif photo", "enlever géolocalisation photo", "effacer métadonnées image en ligne"],
-    "faisabilite": "Redessiner dans un canvas supprime tout l'EXIF. Ajouter la lecture préalable de l'EXIF pour montrer à l'utilisateur ce qui sera supprimé (parser maison sur les octets APP1).",
-    "difficulte": "moyenne"
-  },
-  {
-    "slug": "convertir-jpg-en-pdf",
-    "category": "pdf",
-    "title": "Convertir des images JPG ou PNG en PDF",
-    "priorite": 1,
-    "pourquoi": "Volume de recherche massif et usage administratif permanent : les téléservices exigent des PDF, les gens ont des photos.",
-    "keywords": ["convertir jpg en pdf gratuit", "photo en pdf en ligne", "plusieurs images en un seul pdf"],
-    "faisabilite": "pdf-lib chargé en différé depuis un CDN. Gestion multi-pages, orientation et marges.",
-    "difficulte": "moyenne"
-  },
-  {
     "slug": "fusionner-pdf",
     "category": "pdf",
     "title": "Fusionner plusieurs PDF en un seul",
     "priorite": 2,
     "pourquoi": "Volume énorme, mais concurrence frontale avec iLovePDF et Smallpdf. À différencier par l'absence totale de téléversement et de limite.",
-    "keywords": ["fusionner pdf gratuit sans inscription", "assembler plusieurs pdf", "combiner pdf en ligne confidentiel"],
+    "keywords": [
+      "fusionner pdf gratuit sans inscription",
+      "assembler plusieurs pdf",
+      "combiner pdf en ligne confidentiel"
+    ],
     "faisabilite": "pdf-lib. Réordonnancement des fichiers par glisser-déposer.",
     "difficulte": "moyenne"
   },
@@ -45,7 +19,11 @@
     "title": "Extraire ou supprimer des pages d'un PDF",
     "priorite": 2,
     "pourquoi": "Complète la fusion et capte les requêtes « supprimer une page d'un pdf », moins disputées.",
-    "keywords": ["extraire une page d'un pdf", "supprimer des pages pdf gratuit", "diviser un pdf en plusieurs fichiers"],
+    "keywords": [
+      "extraire une page d'un pdf",
+      "supprimer des pages pdf gratuit",
+      "diviser un pdf en plusieurs fichiers"
+    ],
     "faisabilite": "pdf-lib pour l'écriture, pdf.js pour l'aperçu des pages.",
     "difficulte": "moyenne"
   },
@@ -55,7 +33,11 @@
     "title": "Caviarder définitivement un document (RIB, adresse, nom)",
     "priorite": 1,
     "pourquoi": "Créneau mal servi : la plupart des gens dessinent un rectangle noir dans un lecteur PDF, et le texte reste sélectionnable dessous. Un outil qui rastérise vraiment répond à un besoin réel.",
-    "keywords": ["masquer information sur pdf", "caviarder un document en ligne", "noircir texte pdf définitivement"],
+    "keywords": [
+      "masquer information sur pdf",
+      "caviarder un document en ligne",
+      "noircir texte pdf définitivement"
+    ],
     "faisabilite": "pdf.js pour rendre chaque page en image, application des rectangles, réassemblage en PDF par pdf-lib. Le texte disparaît réellement.",
     "difficulte": "élevée"
   },
@@ -65,7 +47,11 @@
     "title": "Ajouter sa signature sur un PDF",
     "priorite": 1,
     "pourquoi": "Prolongement direct de l'outil de signature déjà en ligne : maillage interne naturel et parcours utilisateur complet.",
-    "keywords": ["signer un pdf gratuitement", "ajouter signature sur pdf en ligne", "signer un contrat pdf sans imprimer"],
+    "keywords": [
+      "signer un pdf gratuitement",
+      "ajouter signature sur pdf en ligne",
+      "signer un contrat pdf sans imprimer"
+    ],
     "faisabilite": "pdf-lib pour incruster le PNG, pdf.js pour l'aperçu et le placement à la souris.",
     "difficulte": "élevée"
   },
@@ -75,7 +61,11 @@
     "title": "Compteur de mots, de caractères et de signes",
     "priorite": 3,
     "pourquoi": "Trafic régulier (étudiants, rédacteurs) et coût de réalisation quasi nul. Bon test de la capacité du site à ranker.",
-    "keywords": ["compteur de mots", "compter les caractères espaces compris", "nombre de signes texte"],
+    "keywords": [
+      "compteur de mots",
+      "compter les caractères espaces compris",
+      "nombre de signes texte"
+    ],
     "faisabilite": "JavaScript pur. Ajouter le temps de lecture et le comptage par paragraphe.",
     "difficulte": "faible"
   },
@@ -85,7 +75,11 @@
     "title": "Générer un QR code (lien, wifi, contact)",
     "priorite": 2,
     "pourquoi": "Demande stable et bonne rétention. Le mode « partage du wifi » est peu proposé par les concurrents gratuits.",
-    "keywords": ["générer qr code gratuit", "qr code wifi", "créer qr code sans inscription"],
+    "keywords": [
+      "générer qr code gratuit",
+      "qr code wifi",
+      "créer qr code sans inscription"
+    ],
     "faisabilite": "Implémentation maison de l'encodage QR, ou bibliothèque légère en différé. Export PNG et SVG.",
     "difficulte": "moyenne"
   },
@@ -95,7 +89,11 @@
     "title": "Calculer la TVA (HT vers TTC et inversement)",
     "priorite": 3,
     "pourquoi": "Requête très fréquente chez les indépendants. Les taux français (20 %, 10 %, 5,5 %, 2,1 %) sont un angle local face aux calculateurs génériques.",
-    "keywords": ["calcul tva 20", "convertir ht en ttc", "calculer montant hors taxe"],
+    "keywords": [
+      "calcul tva 20",
+      "convertir ht en ttc",
+      "calculer montant hors taxe"
+    ],
     "faisabilite": "Trivial. La valeur est dans la clarté et les taux préréglés.",
     "difficulte": "faible"
   },
@@ -105,7 +103,11 @@
     "title": "Recadrer une image au format des réseaux sociaux",
     "priorite": 3,
     "pourquoi": "Formats nombreux et changeants, donc pages à forte longue traîne.",
-    "keywords": ["recadrer image instagram", "format photo linkedin", "redimensionner image pour facebook"],
+    "keywords": [
+      "recadrer image instagram",
+      "format photo linkedin",
+      "redimensionner image pour facebook"
+    ],
     "faisabilite": "Réutilise le moteur de redimensionnement existant, avec cadrage interactif.",
     "difficulte": "faible"
   },
@@ -115,7 +117,11 @@
     "title": "Convertir des photos HEIC d'iPhone en JPG",
     "priorite": 2,
     "pourquoi": "Volume très élevé mais concurrence frontale forte. À ne tenter qu'avec un vrai décodeur pour Chrome et Firefox, sinon l'outil déçoit et nuit à la réputation du site.",
-    "keywords": ["convertir heic en jpg", "ouvrir fichier heic sur pc", "photo iphone illisible windows"],
+    "keywords": [
+      "convertir heic en jpg",
+      "ouvrir fichier heic sur pc",
+      "photo iphone illisible windows"
+    ],
     "faisabilite": "libheif compilé en WebAssembly, chargé en différé et uniquement si le navigateur ne décode pas nativement le HEIC. Vérifier la licence avant intégration.",
     "difficulte": "élevée"
   },
@@ -125,7 +131,11 @@
     "title": "Calculer le nombre de jours entre deux dates",
     "priorite": 3,
     "pourquoi": "Usage administratif constant (préavis, délais de rétractation, congés).",
-    "keywords": ["nombre de jours entre deux dates", "calculer délai de préavis", "compter les jours ouvrés"],
+    "keywords": [
+      "nombre de jours entre deux dates",
+      "calculer délai de préavis",
+      "compter les jours ouvrés"
+    ],
     "faisabilite": "JavaScript pur. Ajouter les jours ouvrés et les jours fériés français calculés (Pâques par l'algorithme de Butcher).",
     "difficulte": "faible"
   },
@@ -135,7 +145,11 @@
     "title": "Générer un mot de passe solide",
     "priorite": 3,
     "pourquoi": "Requête fréquente, et l'argument « généré localement, jamais transmis » est ici particulièrement crédible.",
-    "keywords": ["générateur de mot de passe sécurisé", "mot de passe aléatoire fort", "créer mot de passe complexe"],
+    "keywords": [
+      "générateur de mot de passe sécurisé",
+      "mot de passe aléatoire fort",
+      "créer mot de passe complexe"
+    ],
     "faisabilite": "crypto.getRandomValues. Proposer aussi des phrases de passe, plus mémorisables.",
     "difficulte": "faible"
   },
@@ -145,7 +159,11 @@
     "title": "Ouvrir et convertir un fichier CSV (Excel, JSON, tableau)",
     "priorite": 3,
     "pourquoi": "Public plus technique, mais les CSV mal encodés (point-virgule, UTF-8, accents cassés) sont une douleur française récurrente.",
-    "keywords": ["ouvrir csv sans excel", "csv point virgule accents", "convertir csv en json"],
+    "keywords": [
+      "ouvrir csv sans excel",
+      "csv point virgule accents",
+      "convertir csv en json"
+    ],
     "faisabilite": "Analyseur maison gérant les séparateurs et les encodages, avec détection automatique.",
     "difficulte": "moyenne"
   }
