@@ -23,6 +23,12 @@ ce que tu publies.
    qui affirme une norme fausse expose l'éditeur.
 8. **N'écris jamais de conseil juridique, médical ou financier personnalisé.**
    Informe, renvoie aux sources officielles, et dis que ce n'est pas un conseil.
+9. **Ne laisse aucune trace d'IA nulle part.** Pas de mention de Claude, d'Anthropic
+   ou d'intelligence artificielle dans le site, le code, les commentaires ou les
+   messages de commit. **N'ajoute jamais de ligne `Co-Authored-By`.** L'auteur des
+   commits est `Outilo <agent@outilo.local>`, et rien d'autre.
+10. **Ne publie aucune information personnelle sur l'éditeur** au-delà de ce que les
+    pages légales contiennent déjà. Pas de nom, d'adresse ou d'e-mail ailleurs.
 
 ## Déroulé
 
