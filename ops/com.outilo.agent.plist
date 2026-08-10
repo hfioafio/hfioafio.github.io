@@ -33,6 +33,12 @@
     <string>/opt/homebrew/bin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin</string>
   </dict>
 
+  <!-- Sans SessionCreate, le processus n'ouvre pas de session utilisateur
+       complète : il n'a alors pas accès au trousseau, et le CLI Claude s'y
+       déclare non authentifié alors qu'il l'est depuis un terminal. -->
+  <key>SessionCreate</key>
+  <true/>
+
   <key>RunAtLoad</key>
   <false/>
   <key>ProcessType</key>

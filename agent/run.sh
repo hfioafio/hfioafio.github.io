@@ -7,6 +7,10 @@ set -uo pipefail
 PROJET="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 cd "$PROJET" || exit 1
 
+# launchd fournit un PATH minimal qui ignore les installations utilisateur.
+# On le complète explicitement, sinon 'claude' et 'gh' restent introuvables.
+export PATH="$HOME/.local/bin:/opt/homebrew/bin:/usr/local/bin:$PATH"
+
 JOURNEE="$(date +%Y-%m-%d)"
 LOGS="$PROJET/agent/logs"
 mkdir -p "$LOGS"
