@@ -24,7 +24,11 @@ jobs:
           node-version: 22
       - name: Générer le site
         run: node build.mjs
+      # enablement: true rend le workflow auto-réparant — il active Pages
+      # lui-même si la configuration a été perdue ou jamais faite.
       - uses: actions/configure-pages@v5
+        with:
+          enablement: true
       - uses: actions/upload-pages-artifact@v3
         with:
           path: site
