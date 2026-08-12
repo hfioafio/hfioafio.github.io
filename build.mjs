@@ -254,7 +254,25 @@ async function construireAccueil() {
     .join('\n      ');
 
   const corps = `<h1>${echapper(site.tagline)}</h1>
-      <p class="lede">${publies.length} outil${publies.length > 1 ? 's' : ''} gratuit${publies.length > 1 ? 's' : ''}, sans inscription et sans limite. Vos fichiers ne quittent jamais votre appareil : tout est calculé par votre navigateur.</p>
+      <p class="lede">Un téléservice refuse votre fichier ? Il est trop lourd, au mauvais format ou aux mauvaises dimensions. ${publies.length} outils gratuits pour le corriger en quelques secondes — sans inscription, sans limite, et sans que vos documents quittent votre appareil.</p>
+
+      <h2>Un fichier refusé, une solution</h2>
+      <div class="prose">
+        <div class="scroll-x">
+          <table>
+            <thead><tr><th>Ce que le site vous répond</th><th>Ce qu'il faut faire</th></tr></thead>
+            <tbody>
+              <tr><td>« Fichier trop volumineux », « 1 Mo maximum »</td><td><a href="/outils/compresser-image-taille-precise/">Compresser sous un poids exact</a></td></tr>
+              <tr><td>« Photo non conforme », « 50 Ko maximum »</td><td><a href="/outils/photo-identite-ants-format-poids/">Photo d'identité au format ANTS</a></td></tr>
+              <tr><td>« Format non accepté », « PDF uniquement »</td><td><a href="/outils/convertir-jpg-en-pdf/">Transformer ses photos en PDF</a></td></tr>
+              <tr><td>« Dimensions incorrectes »</td><td><a href="/outils/redimensionner-image-dimensions-exactes/">Redimensionner en pixels ou millimètres</a></td></tr>
+              <tr><td>Document à signer sans imprimante</td><td><a href="/outils/signature-png-fond-transparent/">Créer sa signature transparente</a></td></tr>
+              <tr><td>Masquer une adresse ou un RIB avant envoi</td><td><a href="/outils/flouter-visage-plaque-photo/">Masquer une zone définitivement</a></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
       ${sections}
       ${emplacementPub()}
       <h2>Pourquoi ces outils sont différents</h2>

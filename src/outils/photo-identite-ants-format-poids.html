@@ -1,0 +1,227 @@
+<div class="tool">
+  <div class="dropzone" id="zone">
+    <strong>Choisir la photo</strong>
+    <span>ou glissez-la ici — de face, fond clair et uni, sans lunettes teintées</span>
+  </div>
+
+  <div id="atelier" hidden style="margin-top:1.5rem">
+    <div class="cadreur">
+      <canvas id="toile" aria-label="Cadrage de la photo d'identité"></canvas>
+    </div>
+
+    <div class="controls">
+      <div class="field">
+        <label for="zoom">Agrandissement <span id="zval">100 %</span></label>
+        <input type="range" id="zoom" min="100" max="400" value="100">
+        <span class="hint">Le visage doit occuper 70 à 80 % de la hauteur.</span>
+      </div>
+      <div class="field">
+        <label for="hori">Position horizontale</label>
+        <input type="range" id="hori" min="0" max="100" value="50">
+      </div>
+      <div class="field">
+        <label for="verti">Position verticale</label>
+        <input type="range" id="verti" min="0" max="100" value="50">
+      </div>
+      <div class="field">
+        <label class="checkline"><input type="checkbox" id="reperes" checked> Afficher les repères</label>
+        <span class="hint">Les traits indiquent où placer le sommet du crâne et le menton.</span>
+      </div>
+    </div>
+
+    <div class="actions">
+      <button id="lancer">Générer la photo au format ANTS</button>
+      <span class="status" id="etat"></span>
+    </div>
+
+    <div class="result" id="resultat" hidden>
+      <img class="preview" id="apercu" alt="Photo générée au format d'identité">
+      <div id="controle"></div>
+      <button id="telecharger">Télécharger la photo</button>
+    </div>
+  </div>
+
+  <p class="privacy-note">
+    <span aria-hidden="true">🔒</span>
+    <span>Votre portrait est une donnée biométrique. Il est recadré et compressé par votre navigateur, n'est envoyé nulle part et n'est conservé nulle part.</span>
+  </p>
+</div>
+
+<div class="prose">
+  <h2>Les contraintes techniques, et pourquoi elles bloquent tout le monde</h2>
+  <p>Les téléservices de l'ANTS imposent pour une photo numérique un fichier <strong>JPEG de 10 à 50 kilo-octets</strong>, en proportions 3:4, d'au moins 480 × 640 pixels et de préférence 600 × 800. C'est une fourchette redoutable : une photo de smartphone pèse trois à huit méga-octets, soit cent à huit cents fois trop. Et si l'on compresse à l'aveugle, on tombe presque toujours sous les 10 Ko — donc trop bas, ce qui fait également rejeter le fichier.</p>
+  <p>Cet outil vise l'intérieur de la fourchette. Il recadre d'abord en 3:4, redimensionne en 600 × 800, puis cherche la meilleure qualité tenant sous 50 Ko, et vérifie que le résultat dépasse bien 10 Ko.</p>
+
+  <h2>Ce que cet outil ne fait pas — à lire avant de l'utiliser</h2>
+  <p>Il produit un fichier <strong>aux bonnes dimensions et au bon poids</strong>. Il ne délivre pas de <strong>code ePhoto</strong> : ce code à 22 caractères, valable six mois, ne peut être généré que par un photographe agréé ou une cabine agréée, et il reste obligatoire pour certaines démarches comme la carte d'identité, le passeport ou le permis de conduire.</p>
+  <p>Utilisez donc cet outil quand le téléservice vous demande de <strong>téléverser vous-même une photo</strong>. Si l'on vous réclame un code ePhoto, aucun outil en ligne ne peut le remplacer, et vous devrez passer par un professionnel agréé.</p>
+  <p>Enfin, la conformité ne se limite pas au fichier : expression neutre, bouche fermée, tête nue, regard vers l'objectif, fond clair uni, absence de reflets et d'ombres portées. Une photo techniquement valide mais mal posée sera refusée.</p>
+
+  <h2>Les repères de cadrage</h2>
+  <div class="scroll-x">
+    <table>
+      <thead><tr><th>Critère</th><th>Exigence</th></tr></thead>
+      <tbody>
+        <tr><td>Proportions</td><td>3:4 (équivalent 35 × 45 mm)</td></tr>
+        <tr><td>Définition</td><td>480 × 640 px minimum, 600 × 800 px conseillé</td></tr>
+        <tr><td>Poids du fichier</td><td>entre 10 et 50 Ko</td></tr>
+        <tr><td>Format</td><td>JPEG</td></tr>
+        <tr><td>Hauteur du visage</td><td>70 à 80 % de la hauteur totale, menton au sommet du crâne</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p style="font-size:.85rem;color:var(--muted)">Ces exigences sont celles publiées par l'administration au moment de la rédaction. Vérifiez toujours celles affichées par le téléservice que vous utilisez : elles font foi.</p>
+
+  <h2>Questions fréquentes</h2>
+
+  <details>
+    <summary>Ma photo sera-t-elle acceptée à coup sûr&nbsp;?</summary>
+    <p>Non, et personne ne peut le garantir. L'outil assure la conformité du fichier — dimensions, proportions, poids, format. La validation dépend aussi de la pose, de l'éclairage et du fond, qui sont appréciés par l'agent instructeur. Une photo prise à bout de bras contre un mur blanc, sans ombre et sans sourire, passe généralement bien.</p>
+  </details>
+
+  <details>
+    <summary>Puis-je m'en servir pour un passeport ou une carte d'identité&nbsp;?</summary>
+    <p>Ces démarches exigent en principe un code ePhoto délivré par un photographe ou une cabine agréés, ou une photo papier remise au guichet. Cet outil ne remplace ni l'un ni l'autre. Il sert aux démarches qui acceptent le téléversement direct d'un fichier.</p>
+  </details>
+
+  <details>
+    <summary>Pourquoi mon fichier fait-il moins de 10 Ko&nbsp;?</summary>
+    <p>Parce que la photo comporte trop peu de détail — fond uniforme, image déjà très compressée, ou visage de petite taille dans le cadre. L'outil vous le signale et relève automatiquement la qualité pour repasser au-dessus du seuil.</p>
+  </details>
+
+  <details>
+    <summary>Le fond de ma photo n'est pas uni, est-ce grave&nbsp;?</summary>
+    <p>Oui, c'est l'un des motifs de refus les plus fréquents. Placez-vous face à un mur clair et uni, à environ un mètre de distance pour éviter votre propre ombre portée, avec la lumière du jour de face plutôt que derrière vous.</p>
+  </details>
+
+  <details>
+    <summary>Mes lunettes doivent-elles être retirées&nbsp;?</summary>
+    <p>Les verres teintés sont interdits et les montures ne doivent masquer ni les yeux ni provoquer de reflets. Dans le doute, retirez-les : une photo sans lunettes n'est jamais refusée pour cette raison.</p>
+  </details>
+</div>
+
+<style>
+  .cadreur { display: flex; justify-content: center; background: var(--surface-2); border: 1px solid var(--border); border-radius: 7px; padding: 1rem; }
+  .cadreur canvas { max-width: 100%; height: auto; border-radius: 4px; }
+  .bilan { display: grid; gap: .4rem; margin: 1rem 0; }
+  .bilan div { display: flex; gap: .5rem; align-items: baseline; font-size: .92rem; }
+  .bilan .ok { color: var(--accent); font-weight: 700; }
+  .bilan .ko { color: var(--danger); font-weight: 700; }
+</style>
+
+<script type="module">
+  import { $, poids, zoneDepot, chargerImage, versCanvas, versBlob, compresserSous, telecharger, etat }
+    from '/assets/outil.js';
+
+  const L = 600, H = 800;                    // définition conseillée par l'ANTS
+  const MIN = 10 * 1024, MAX = 50 * 1024;    // fourchette de poids imposée
+
+  let source = null, sortie = null;
+  const toile = $('#toile');
+  toile.width = L; toile.height = H;
+  const ctx = toile.getContext('2d');
+  const msg = $('#etat');
+
+  zoneDepot($('#zone'), async ([f]) => {
+    try {
+      source = await chargerImage(f);
+      $('#atelier').hidden = false;
+      $('#zone').querySelector('strong').textContent = f.name;
+      // Zoom initial : l'image remplit le cadre 3:4 sans bande.
+      $('#zoom').value = 100;
+      $('#hori').value = 50; $('#verti').value = 50;
+      dessiner();
+      etat(msg, 'Ajustez le cadrage, puis générez.');
+    } catch (e) { etat(msg, e.message, true); }
+  });
+
+  function geometrie() {
+    const zoom = parseInt($('#zoom').value, 10) / 100;
+    // Échelle de base : « remplir » le cadre, jamais de bande blanche.
+    const base = Math.max(L / source.width, H / source.height);
+    const k = base * zoom;
+    const l = source.width * k, h = source.height * k;
+    const x = (L - l) * (parseInt($('#hori').value, 10) / 100);
+    const y = (H - h) * (parseInt($('#verti').value, 10) / 100);
+    return { l, h, x, y };
+  }
+
+  function dessiner(avecReperes = true) {
+    if (!source) return;
+    const { l, h, x, y } = geometrie();
+    ctx.fillStyle = '#fff';
+    ctx.fillRect(0, 0, L, H);
+    ctx.imageSmoothingQuality = 'high';
+    ctx.drawImage(source, x, y, l, h);
+
+    if (avecReperes && $('#reperes').checked) {
+      // Le visage doit occuper 70 à 80 % de la hauteur : on borne la zone utile.
+      const hautCrane = H * 0.12, basMenton = H * 0.88;
+      ctx.save();
+      ctx.strokeStyle = 'rgba(31,111,74,.85)';
+      ctx.setLineDash([10, 8]);
+      ctx.lineWidth = 3;
+      [hautCrane, basMenton].forEach((py) => {
+        ctx.beginPath(); ctx.moveTo(0, py); ctx.lineTo(L, py); ctx.stroke();
+      });
+      ctx.setLineDash([]);
+      ctx.strokeStyle = 'rgba(31,111,74,.35)';
+      ctx.lineWidth = 2;
+      ctx.beginPath(); ctx.moveTo(L / 2, 0); ctx.lineTo(L / 2, H); ctx.stroke();
+      ctx.fillStyle = 'rgba(31,111,74,.9)';
+      ctx.font = '600 20px -apple-system, sans-serif';
+      ctx.fillText('sommet du crâne', 12, hautCrane - 10);
+      ctx.fillText('menton', 12, basMenton + 26);
+      ctx.restore();
+    }
+  }
+
+  ['zoom', 'hori', 'verti'].forEach((id) =>
+    $(`#${id}`).addEventListener('input', () => {
+      if (id === 'zoom') $('#zval').textContent = `${$('#zoom').value} %`;
+      dessiner();
+    })
+  );
+  $('#reperes').addEventListener('change', () => dessiner());
+
+  $('#lancer').addEventListener('click', async () => {
+    if (!source) return;
+    try {
+      etat(msg, 'Recadrage et compression…');
+      dessiner(false);                       // export sans les repères
+      const propre = versCanvas(toile, L, H, '#ffffff');
+
+      let r = await compresserSous(propre, MAX, 'image/jpeg');
+      if (!r) { etat(msg, 'Compression impossible sous 50 Ko.', true); dessiner(); return; }
+
+      // Trop léger : l'ANTS refuse aussi en dessous de 10 Ko. On remonte la qualité.
+      if (r.blob.size < MIN) {
+        for (const q of [0.9, 0.95, 0.98, 1]) {
+          const essai = await versBlob(propre, 'image/jpeg', q);
+          if (essai.size >= MIN && essai.size <= MAX) { r = { blob: essai, qualite: q, echelle: 1 }; break; }
+        }
+      }
+      sortie = r.blob;
+
+      const bon = sortie.size >= MIN && sortie.size <= MAX;
+      const ligne = (ok, texte) =>
+        `<div><span class="${ok ? 'ok' : 'ko'}">${ok ? '✓' : '✗'}</span><span>${texte}</span></div>`;
+      $('#controle').innerHTML = `<div class="bilan">
+        ${ligne(true, `Définition : ${L} × ${H} px (minimum requis 480 × 640)`)}
+        ${ligne(true, 'Proportions : 3:4, équivalent 35 × 45 mm')}
+        ${ligne(bon, `Poids : ${poids(sortie.size)} — la fourchette exigée est 10 à 50 Ko`)}
+        ${ligne(true, 'Format : JPEG')}
+      </div>
+      <p class="status">Le cadrage, la pose et le fond restent sous votre responsabilité : ils sont appréciés par l'administration.</p>`;
+
+      $('#apercu').src = URL.createObjectURL(sortie);
+      $('#resultat').hidden = false;
+      $('#telecharger').onclick = () => telecharger(sortie, 'photo-identite.jpg');
+      etat(msg, bon ? 'Photo conforme aux contraintes de fichier.' : 'Poids hors fourchette : ajustez le cadrage.', !bon);
+      dessiner();
+    } catch (e) {
+      etat(msg, e.message, true);
+      dessiner();
+    }
+  });
+</script>

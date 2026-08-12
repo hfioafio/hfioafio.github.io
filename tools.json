@@ -110,5 +110,22 @@
     ],
     "status": "live",
     "createdAt": "2026-08-10"
+  },
+  {
+    "slug": "photo-identite-ants-format-poids",
+    "category": "image",
+    "title": "Photo d'identité aux normes ANTS : format et poids exigés",
+    "h1": "Préparer une photo d'identité au format ANTS",
+    "description": "Recadrez votre photo en 3:4, en 600 × 800 pixels, et obtenez un fichier JPEG dans la fourchette de 10 à 50 Ko exigée par les téléservices. Tout se fait dans votre navigateur.",
+    "intent": "Un téléservice refuse la photo : trop lourde, mauvais format ou mauvaises proportions.",
+    "keywords": [
+      "photo identité ants format",
+      "photo identité 50 ko",
+      "redimensionner photo identité ants",
+      "photo identité trop lourde téléservice",
+      "photo 600x800 identité"
+    ],
+    "status": "live",
+    "createdAt": "2026-08-10"
   }
 ]
