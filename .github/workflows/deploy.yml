@@ -27,6 +27,8 @@ jobs:
           node build.mjs
           rm -rf site/tab-suspender
           cp -R static-tab-suspender site/tab-suspender
+          rm -rf site/tabsuspender
+          cp -R static-tabsuspender-v2 site/tabsuspender
       - uses: actions/configure-pages@v5
         with:
           enablement: true
