@@ -23,9 +23,10 @@ jobs:
         with:
           node-version: 22
       - name: Générer le site
-        run: node build.mjs
-      # enablement: true rend le workflow auto-réparant — il active Pages
-      # lui-même si la configuration a été perdue ou jamais faite.
+        run: |
+          node build.mjs
+          rm -rf site/tab-suspender
+          cp -R static-tab-suspender site/tab-suspender
       - uses: actions/configure-pages@v5
         with:
           enablement: true
