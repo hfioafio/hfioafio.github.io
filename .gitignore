@@ -1,4 +1,23 @@
+# Generated output
 site/
-agent/logs/
-agent/.verrou
+
+# Internal runtime state
+.internal/automation/logs/
+.internal/automation/.lock
+
+# Dependencies and caches
+node_modules/
+.cache/
+
+# Local configuration and secrets
+.env
+.env.*
+*.local
+
+# Editor and OS files
 .DS_Store
+.idea/
+.vscode/
+
+# Logs
+*.log
