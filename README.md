@@ -4,7 +4,7 @@ Outilo est une collection d’outils web gratuits conçus pour effectuer des tâ
 
 Le projet privilégie trois principes : **simplicité**, **rapidité** et **confidentialité**. Lorsque cela est techniquement possible, les fichiers sont traités localement dans le navigateur et ne sont pas envoyés vers un serveur.
 
-## Architecture
+## Structure
 
 ```text
 src/
@@ -12,11 +12,10 @@ src/
 ├── outils/          # interfaces des outils
 └── pages/           # pages éditoriales et légales
 
-site/                # sortie générée
 build.mjs            # génération du site statique
 config.json          # configuration du site
 tools.json           # catalogue des outils
-ops/                 # scripts d’exploitation
+site/                # sortie générée, non versionnée
 ```
 
 ## Développement
@@ -40,11 +39,16 @@ Puis ouvrir `http://localhost:8787` dans un navigateur.
 ## Principes techniques
 
 - traitement local des fichiers lorsque possible ;
-- architecture statique, volontairement simple à maintenir ;
+- architecture statique volontairement simple à maintenir ;
 - absence de dépendances inutiles dans la chaîne de génération ;
+- composants et ressources partagés plutôt que du code dupliqué ;
 - métadonnées, navigation, sitemap et données structurées générés de manière centralisée ;
-- validation manuelle des outils avant publication.
+- validation réelle des outils avant publication.
 
 ## Confidentialité
 
 Outilo est conçu pour limiter au maximum la transmission de données. Les outils manipulant des fichiers doivent conserver leur traitement dans le navigateur sauf indication explicite contraire.
+
+## Contribution
+
+Les règles de structure, de qualité et de maintenance sont décrites dans `CONTRIBUTING.md`.
