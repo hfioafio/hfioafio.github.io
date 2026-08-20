@@ -29,6 +29,8 @@ jobs:
           cp -R static-tab-suspender site/tab-suspender
           rm -rf site/tabsuspender
           cp -R static-tabsuspender-v2 site/tabsuspender
+          rm -rf site/alliance-sambo-preview
+          cp -R static-alliance-sambo-preview site/alliance-sambo-preview
       - uses: actions/configure-pages@v5
         with:
           enablement: true
